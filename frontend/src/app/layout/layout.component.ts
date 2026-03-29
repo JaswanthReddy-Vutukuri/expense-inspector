@@ -1,6 +1,6 @@
 import { Component, signal, computed } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive, Router, NavigationEnd } from '@angular/router';
-import { LucideAngularModule, LayoutDashboard, Receipt, FileText, Sparkles, Terminal, LogOut, PanelLeftClose, PanelLeftOpen, Menu, X, Plus, ChevronRight } from 'lucide-angular';
+import { LucideAngularModule } from 'lucide-angular';
 import { AuthService } from '../services/auth.service';
 import { AiChatComponent } from '../ai-chat/ai-chat.component';
 import { filter, map } from 'rxjs';
@@ -235,7 +235,6 @@ export class LayoutComponent {
   mainNav = [
     { route: '/dashboard', icon: 'layout-dashboard', label: 'Overview' },
     { route: '/expenses', icon: 'receipt', label: 'Expenses' },
-    { route: '/receipts', icon: 'file-text', label: 'Receipts' },
   ];
 
   toolNav = [
@@ -258,7 +257,6 @@ export class LayoutComponent {
     if (url.includes('/expenses/new')) return 'New Expense';
     if (url.includes('/expenses/edit')) return 'Edit Expense';
     if (url.includes('/expenses')) return 'Expenses';
-    if (url.includes('/receipts')) return 'Receipts';
     if (url.includes('/debug')) return 'Debug';
     return 'Overview';
   });

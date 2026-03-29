@@ -1,0 +1,84 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792]
+   /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>
+endobj
+
+4 0 obj
+<< /Length 820 >>
+stream
+BT
+/F1 18 Tf
+50 740 Td
+(Monthly Expense Report - March 2026) Tj
+0 -30 Td
+/F1 12 Tf
+(Employee: Jaswanth Reddy) Tj
+0 -15 Td
+(Department: Engineering) Tj
+0 -15 Td
+(Period: March 1 - March 29, 2026) Tj
+0 -30 Td
+/F1 10 Tf
+(Date          Description                    Category        Amount) Tj
+0 -5 Td
+(----------------------------------------------------------------) Tj
+0 -15 Td
+(2026-03-02    Uber to Office                 Transport       $15.50) Tj
+0 -15 Td
+(2026-03-05    Team Lunch at Olive Garden      Food            $45.00) Tj
+0 -15 Td
+(2026-03-08    AWS Monthly Subscription        Bills          $120.00) Tj
+0 -15 Td
+(2026-03-10    Gym Membership Renewal          Health          $50.00) Tj
+0 -15 Td
+(2026-03-12    Netflix + Spotify               Entertainment   $25.99) Tj
+0 -15 Td
+(2026-03-15    Groceries at Walmart            Food            $87.30) Tj
+0 -15 Td
+(2026-03-18    Metro Card Recharge             Transport       $40.00) Tj
+0 -15 Td
+(2026-03-20    Office Supplies from Amazon     Shopping        $62.50) Tj
+0 -15 Td
+(2026-03-22    Dinner with Client              Food            $95.00) Tj
+0 -15 Td
+(2026-03-25    Electricity Bill                Bills          $150.00) Tj
+0 -15 Td
+(2026-03-27    Pharmacy - Vitamins             Health          $32.00) Tj
+0 -15 Td
+(2026-03-29    New Headphones                  Shopping        $79.99) Tj
+0 -25 Td
+(----------------------------------------------------------------) Tj
+0 -15 Td
+/F1 11 Tf
+(TOTAL                                                       $803.28) Tj
+ET
+endstream
+endobj
+
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000266 00000 n 
+0000001138 00000 n 
+
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1215
+%%EOF

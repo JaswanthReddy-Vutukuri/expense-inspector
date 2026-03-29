@@ -38,10 +38,6 @@ export const routes: Routes = [
         loadComponent: () => import('./expenses/expense-form/expense-form.component').then(m => m.ExpenseFormComponent)
       },
       {
-        path: 'receipts',
-        loadComponent: () => import('./receipts/receipts.component').then(m => m.ReceiptsComponent)
-      },
-      {
         path: 'debug',
         loadComponent: () => import('./debug/debug.component').then(m => m.DebugComponent)
       }

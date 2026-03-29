@@ -16,15 +16,9 @@ import { getCategoryColor } from '../../shared/constants/category-colors';
   template: `
     <div class="max-w-5xl mx-auto space-y-5 animate-fade-in">
       <!-- Header -->
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="section-label">Manage</p>
-          <h1 class="text-2xl font-bold text-ei-text">Expenses</h1>
-        </div>
-        <a routerLink="new" class="ei-btn-primary">
-          <lucide-icon name="plus" [size]="16"></lucide-icon>
-          <span class="hidden sm:inline">New Expense</span>
-        </a>
+      <div>
+        <p class="section-label">Manage</p>
+        <h1 class="text-2xl font-bold text-ei-text">Expenses</h1>
       </div>
 
       <!-- Filter bar -->
@@ -34,7 +28,7 @@ import { getCategoryColor } from '../../shared/constants/category-colors';
           <div class="relative flex-1 min-w-[200px]">
             <lucide-icon name="search" [size]="14" class="absolute left-3 top-1/2 -translate-y-1/2 text-ei-muted"></lucide-icon>
             <input type="text" [(ngModel)]="searchQuery" (ngModelChange)="onSearch()"
-                   class="ei-input pl-9 py-2" placeholder="Search expenses...">
+                   class="ei-input pl-10 py-2" placeholder="Search expenses...">
           </div>
           <!-- Category chips -->
           <div class="flex items-center gap-1.5 overflow-x-auto scrollbar-none">
