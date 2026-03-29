@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from '../../environments/environment';
+import { AiConfigService } from '../shared/services/ai-config.service';
 
 export interface ChatMessage {
   role: 'user' | 'assistant';
@@ -34,33 +34,20 @@ export interface UploadResponse {
   providedIn: 'root'
 })
 export class AiChatService {
-  private aiUrl = environment.aiUrl;
+  private http = inject(HttpClient);
+  private aiConfig = inject(AiConfigService);
 
-  constructor(private http: HttpClient) {}
-
-  /**
-   * Send a message to the AI chat endpoint with conversation history
-   * JWT token will be automatically attached by the JWT interceptor
-   * @param message Current user message
-   * @param history Optional array of previous messages for context
-   */
   sendMessage(message: string, history?: ChatMessage[]): Observable<ChatResponse> {
     const payload: ChatRequest = { message, history };
-    return this.http.post<ChatResponse>(`${this.aiUrl}/chat`, payload);
+    return this.http.post<ChatResponse>(`${this.aiConfig.aiUrl()}/chat`, payload);
   }
 
-  /**
-   * Upload a PDF document for RAG processing
-   * @param file PDF file to upload
-   * @param message Optional message to send with the upload
-   * @returns Upload response with chunk count
-   */
   uploadDocument(file: File, message?: string): Observable<UploadResponse> {
     const formData = new FormData();
-    formData.append('file', file); // Backend expects 'file' field name
+    formData.append('file', file);
     if (message) {
-      formData.append('message', message); // Optional message
+      formData.append('message', message);
     }
-    return this.http.post<UploadResponse>(`${this.aiUrl}/upload`, formData);
+    return this.http.post<UploadResponse>(`${this.aiConfig.aiUrl()}/upload`, formData);
   }
 }

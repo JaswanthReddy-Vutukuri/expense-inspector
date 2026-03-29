@@ -2,9 +2,10 @@ import { Component, EventEmitter, Output, signal, computed, inject } from '@angu
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, NavigationEnd } from '@angular/router';
-import { LucideAngularModule, Sparkles, Trash2, X, Paperclip, Send, FileText, AlertCircle, Upload, XCircle } from 'lucide-angular';
+import { LucideAngularModule } from 'lucide-angular';
 import { SimpleMarkdownPipe } from '../shared/pipes/simple-markdown.pipe';
 import { AiChatService, ChatMessage } from '../services/ai-chat.service';
+import { AiConfigService } from '../shared/services/ai-config.service';
 import { filter, map } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
 
@@ -24,11 +25,28 @@ import { toSignal } from '@angular/core/rxjs-interop';
             <h3 class="text-sm font-semibold text-white leading-none">AI Assistant</h3>
             <div class="flex items-center gap-1.5 mt-0.5">
               <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span class="text-[10px] text-slate-400">Online</span>
+              <span class="text-[10px] text-slate-400">Online · {{ aiConfig.layerLabel() }}</span>
             </div>
           </div>
         </div>
-        <div class="flex items-center gap-1">
+        <div class="flex items-center gap-2">
+          <!-- Layer toggle -->
+          <div class="flex rounded-md border border-ei-dark-b overflow-hidden">
+            <button (click)="aiConfig.setLayer('vanilla')"
+                    class="px-2 py-1 text-[10px] font-mono transition-colors"
+                    [class]="aiConfig.activeLayer() === 'vanilla'
+                      ? 'bg-ei-accent text-white'
+                      : 'text-slate-400 hover:text-slate-200'">
+              Vanilla
+            </button>
+            <button (click)="aiConfig.setLayer('langchain')"
+                    class="px-2 py-1 text-[10px] font-mono transition-colors"
+                    [class]="aiConfig.activeLayer() === 'langchain'
+                      ? 'bg-ei-accent text-white'
+                      : 'text-slate-400 hover:text-slate-200'">
+              LangChain
+            </button>
+          </div>
           <button (click)="clearChatHistory()"
                   [disabled]="messages().length === 0"
                   class="w-7 h-7 rounded-lg flex items-center justify-center text-slate-400
@@ -39,7 +57,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
           </button>
           <button (click)="closePanel.emit()"
                   class="w-7 h-7 rounded-lg flex items-center justify-center text-slate-400
-                         hover:bg-ei-dark-b hover:text-slate-200 transition-colors md:hidden"
+                         hover:bg-ei-dark-b hover:text-slate-200 transition-colors"
                   title="Close">
             <lucide-icon name="x" [size]="14"></lucide-icon>
           </button>
@@ -156,10 +174,10 @@ import { toSignal } from '@angular/core/rxjs-interop';
       }
 
       <!-- Input area -->
-      <div class="flex items-end gap-2 px-3 py-3 border-t border-ei-dark-b flex-shrink-0">
+      <div class="flex items-center gap-3 px-4 py-3 border-t border-ei-dark-b flex-shrink-0">
         <button (click)="triggerFileUpload()"
                 [disabled]="isLoading() || isUploading()"
-                class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400
+                class="w-9 h-9 rounded-lg flex items-center justify-center text-slate-400
                        hover:bg-ei-dark-b hover:text-ei-accent transition-colors flex-shrink-0
                        disabled:opacity-30 disabled:cursor-not-allowed"
                 title="Upload PDF">
@@ -176,7 +194,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
                       transition-colors disabled:opacity-50">
         <button (click)="sendMessage()"
                 [disabled]="!userInput.trim() || isLoading() || isUploading()"
-                class="w-8 h-8 rounded-lg flex items-center justify-center transition-colors flex-shrink-0
+                class="w-9 h-9 rounded-lg flex items-center justify-center transition-colors flex-shrink-0
                        disabled:opacity-30 disabled:cursor-not-allowed"
                 [class]="userInput.trim() ? 'bg-ei-accent text-white hover:bg-ei-accent-d' : 'text-slate-500'"
                 title="Send">
@@ -196,6 +214,7 @@ export class AiChatComponent {
   private readonly STORAGE_KEY = 'expense-inspector-chat-history';
   private router = inject(Router);
   private aiChatService = inject(AiChatService);
+  aiConfig = inject(AiConfigService);
 
   isLoading = signal(false);
   isUploading = signal(false);

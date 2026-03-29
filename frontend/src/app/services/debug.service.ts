@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from '../../environments/environment';
+import { AiConfigService } from '../shared/services/ai-config.service';
 
 export interface VectorStoreStats {
   totalDocuments: number;
@@ -44,9 +44,10 @@ export interface SearchResult {
   providedIn: 'root'
 })
 export class DebugService {
-  private aiUrl = environment.aiUrl;
+  private http = inject(HttpClient);
+  private aiConfig = inject(AiConfigService);
 
-  constructor(private http: HttpClient) {}
+  private get aiUrl() { return this.aiConfig.aiUrl(); }
 
   getStats(): Observable<{ success: boolean; stats: VectorStoreStats }> {
     return this.http.get<{ success: boolean; stats: VectorStoreStats }>(`${this.aiUrl}/debug/stats`);

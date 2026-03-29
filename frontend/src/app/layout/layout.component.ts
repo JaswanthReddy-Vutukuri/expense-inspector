@@ -202,20 +202,18 @@ import { toSignal } from '@angular/core/rxjs-interop';
       }
     </div>
 
-    <!-- AI Assistant FAB (bottom-right) -->
-    <button (click)="chatOpen.set(!chatOpen())"
-            class="fixed bottom-5 right-5 z-[60] w-12 h-12 rounded-full shadow-lg
-                   flex items-center justify-center transition-all duration-200
-                   hover:scale-105 active:scale-95"
-            [class]="chatOpen()
-              ? 'bg-ei-dark-s text-slate-300 hover:bg-ei-dark-b'
-              : 'bg-ei-accent text-white hover:bg-ei-accent-d'"
-            title="AI Assistant">
-      <lucide-icon [name]="chatOpen() ? 'x' : 'sparkles'" [size]="20"></lucide-icon>
-      @if (!chatOpen()) {
+    <!-- AI Assistant FAB (bottom-right, hidden when chat is open) -->
+    @if (!chatOpen()) {
+      <button (click)="chatOpen.set(true)"
+              class="fixed bottom-5 right-5 z-[60] w-12 h-12 rounded-full shadow-lg
+                     bg-ei-accent text-white hover:bg-ei-accent-d
+                     flex items-center justify-center transition-all duration-200
+                     hover:scale-105 active:scale-95"
+              title="AI Assistant">
+        <lucide-icon name="sparkles" [size]="20"></lucide-icon>
         <span class="absolute -top-0.5 -right-0.5 w-3 h-3 rounded-full bg-ei-emerald border-2 border-ei-bg animate-pulse"></span>
-      }
-    </button>
+      </button>
+    }
   `,
   styles: []
 })

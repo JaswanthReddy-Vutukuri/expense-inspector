@@ -1,5 +1,6 @@
 export const environment = {
   production: true,
   apiUrl: '/api',
-  aiUrl: '/ai',
+  aiVanillaUrl: '/ai-vanilla',
+  aiLangchainUrl: '/ai-langchain',
 };
