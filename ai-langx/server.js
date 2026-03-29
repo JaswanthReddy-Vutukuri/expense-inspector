@@ -25,7 +25,7 @@ import chatRoutes from './src/routes/chat.js';
 import uploadRoutes from './src/routes/upload.js';
 import reconcileRoutes from './src/routes/reconcile.js';
 import { authMiddleware } from './src/middleware/auth.js';
-// import debugRoutes from './src/routes/debug.js';
+import debugRoutes from './src/routes/debug.js';
 
 const app = express();
 const PORT = config.port;
@@ -81,7 +81,13 @@ app.use((req, res, next) => {
 app.use('/ai', chatRoutes);
 app.use('/ai/upload', authMiddleware, uploadRoutes);
 app.use('/ai/reconcile', reconcileRoutes);
-// app.use('/ai', debugRoutes);   // TODO: Implement debug routes
+// Debug routes - disabled in production unless explicitly enabled
+if (!IS_PRODUCTION || ENABLE_DEBUG) {
+  app.use('/ai', debugRoutes);
+  console.log('[Server] Debug routes ENABLED');
+} else {
+  console.log('[Server] Debug routes DISABLED (production mode)');
+}
 
 // Health check
 app.get('/health', (req, res) => {
