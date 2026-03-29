@@ -23,6 +23,8 @@ import { SystemMessage, HumanMessage } from "@langchain/core/messages";
 import { IntentRouterStateSchema } from './state.js';
 import { executeExpenseAgent } from '../agents/expense.agent.js';
 import { handleRAGQuestion } from '../handlers/rag.handler.js';
+import { getLangSmithRunConfig, getTraceTags } from '../config/langsmith.config.js';
+import { config } from '../config/env.js';
 
 /**
  * Node 1: Classify Intent
@@ -48,8 +50,10 @@ const classifyIntent = async (state) => {
   try {
     console.log('[Intent Graph] Creating LLM...');
     const llm = new ChatOpenAI({
-      modelName: "gpt-4o-mini",
-      temperature: 0  // Deterministic for classification
+      modelName: config.llmModel,
+      temperature: 0,  // Deterministic for classification
+      tags: getTraceTags('intent_classify', state.userId),
+      metadata: { component: 'intent_classifier', userId: state.userId, traceId: state.traceId },
     });
     
     console.log('[Intent Graph] Creating classification prompt...');
@@ -390,10 +394,12 @@ const handleGeneralChat = async (state) => {
   
   try {
     const llm = new ChatOpenAI({
-      modelName: "gpt-4o-mini",
-      temperature: 0.7
+      modelName: config.llmModel,
+      temperature: 0.7,
+      tags: getTraceTags('general_chat', state.userId),
+      metadata: { component: 'general_chat', userId: state.userId, traceId: state.traceId },
     });
-    
+
     const systemPrompt = `You are a helpful expense tracking assistant. 
 Keep responses brief and friendly. If asked about capabilities, mention:
 - Adding, viewing, modifying, and deleting expenses
@@ -636,8 +642,10 @@ export const executeIntentRouter = async (userMessage, userId, authToken, conver
       timestamp: new Date().toISOString()
     };
     
-    // Execute graph
-    const result = await graph.invoke(initialState);
+    // Execute graph — attach run name so the entire workflow appears as
+    // "intent_router_run" in LangSmith, with all sub-nodes nested under it.
+    const runConfig = getLangSmithRunConfig('intent_router_run', userId, initialState.traceId);
+    const result = await graph.invoke(initialState, runConfig);
     
     console.log('[Intent Router] Complete:', {
       intent: result.intent,

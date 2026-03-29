@@ -65,8 +65,10 @@ export const createLLM = (overrides = {}) => {
     openAIApiKey: process.env.OPENAI_API_KEY,
     // Callbacks for tracing (LangSmith)
     callbacks: overrides.callbacks || [],
-    // Tags for LangSmith filtering
-    tags: overrides.tags || []
+    // Tags for LangSmith filtering/search
+    tags: overrides.tags || [],
+    // Metadata attached to every trace from this LLM instance
+    metadata: overrides.metadata || {},
   });
 };
 

@@ -33,6 +33,11 @@ export const config = {
   langchainTracingV2: optional('LANGCHAIN_TRACING_V2', 'false'),
   langchainApiKey: optional('LANGCHAIN_API_KEY', ''),
   langchainProject: optional('LANGCHAIN_PROJECT', 'expense-tracker-ai-langx'),
+  langchainEndpoint: optional('LANGCHAIN_ENDPOINT', 'https://api.smith.langchain.com'),
+
+  // Agent tuning
+  maxAgentIterations: parseInt(optional('MAX_AGENT_ITERATIONS', '5'), 10),
+  agentTimeoutMs: parseInt(optional('AGENT_TIMEOUT_MS', '60000'), 10),
 
   // Backend
   backendBaseUrl: required('BACKEND_BASE_URL'),

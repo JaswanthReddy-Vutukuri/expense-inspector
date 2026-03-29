@@ -39,16 +39,16 @@ import { PromptTemplate, ChatPromptTemplate } from "@langchain/core/prompts";
 import { createLLM } from '../config/llm.config.js';
 import { getSystemPromptText } from '../prompts/system.prompt.js';
 import { createToolsWithContext } from '../tools/index.js';
-import { getTraceTags, getTraceMetadata } from '../config/langsmith.config.js';
+import { getTraceTags, getTraceMetadata, getLangSmithRunConfig } from '../config/langsmith.config.js';
+import { config } from '../config/env.js';
 
 /**
- * Agent Configuration
- * These safety limits are critical for production
+ * Agent Configuration — driven by centralized config, not raw process.env
  */
 const AGENT_CONFIG = {
-  MAX_ITERATIONS: parseInt(process.env.MAX_AGENT_ITERATIONS) || 5,
-  TIMEOUT_MS: parseInt(process.env.AGENT_TIMEOUT_MS) || 60000,
-  VERBOSE: process.env.NODE_ENV === 'development'
+  MAX_ITERATIONS: config.maxAgentIterations,
+  TIMEOUT_MS: config.agentTimeoutMs,
+  VERBOSE: config.nodeEnv === 'development'
 };
 
 /**
@@ -170,7 +170,9 @@ export const createExpenseAgent = async (authToken, context = {}) => {
       handleParsingErrors: true,
       // OBSERVABILITY: Return details of all tool calls for monitoring
       returnIntermediateSteps: true,
-      // LANGSMITH: Automatically traced via tags/metadata from llm
+      // LANGSMITH: Label this executor in LangSmith so runs appear as "expense_agent"
+      tags: getTraceTags('expense_agent', context.userId),
+      metadata: getTraceMetadata(context.traceId, context.userId, { component: 'AgentExecutor' }),
     });
     
     console.log('[ExpenseAgent] Agent executor created successfully');
@@ -252,12 +254,19 @@ export const executeExpenseAgent = async (message, authToken, history = [], cont
     console.log('[ExpenseAgent] Chat history converted:', chatHistory.length, 'messages');
     
     // Execute agent with timeout protection
+    // getLangSmithRunConfig provides run name + tags + metadata so every trace in
+    // LangSmith is labelled "expense_agent_run" and linked to the correct user/trace.
+    const runConfig = getLangSmithRunConfig('expense_agent_run', context.userId, context.traceId, {
+      messageLength: message.length,
+      historyLength: chatHistory.length,
+    });
+
     try {
       const result = await Promise.race([
-        executor.invoke({
-          input: message,
-          chat_history: chatHistory // ← Pass conversation history
-        }),
+        executor.invoke(
+          { input: message, chat_history: chatHistory },
+          runConfig
+        ),
         new Promise((_, reject) => 
           setTimeout(() => reject(new Error('Agent execution timeout')), AGENT_CONFIG.TIMEOUT_MS)
         )

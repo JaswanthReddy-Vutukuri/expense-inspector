@@ -18,10 +18,12 @@
  */
 
 import { Client } from "langsmith";
+import { config } from './env.js';
 
 /**
  * LangSmith Client Configuration
- * 
+ * Reads from centralized config — not from process.env directly.
+ *
  * ENVIRONMENT VARIABLES:
  * - LANGCHAIN_TRACING_V2: Enable/disable tracing ("true"/"false")
  * - LANGCHAIN_API_KEY: LangSmith API key
@@ -29,10 +31,10 @@ import { Client } from "langsmith";
  * - LANGCHAIN_ENDPOINT: LangSmith API endpoint (default: https://api.smith.langchain.com)
  */
 export const LANGSMITH_CONFIG = {
-  ENABLED: process.env.LANGCHAIN_TRACING_V2 === 'true',
-  API_KEY: process.env.LANGCHAIN_API_KEY,
-  PROJECT: process.env.LANGCHAIN_PROJECT || 'expense-tracker-ai-langx',
-  ENDPOINT: process.env.LANGCHAIN_ENDPOINT || 'https://api.smith.langchain.com'
+  ENABLED: config.langchainTracingV2 === 'true',
+  API_KEY: config.langchainApiKey,
+  PROJECT: config.langchainProject,
+  ENDPOINT: config.langchainEndpoint,
 };
 
 /**
@@ -87,29 +89,64 @@ export const getTraceMetadata = (traceId, userId, additionalMeta = {}) => {
     traceId,
     userId,
     timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV || 'development',
+    environment: config.nodeEnv,
     ...additionalMeta
   };
 };
 
 /**
- * Initialize LangSmith tracing
- * Call this early in application startup
+ * Initialize LangSmith tracing.
+ * Call this before any LangChain component is instantiated.
+ *
+ * LangChain reads LANGCHAIN_TRACING_V2 / LANGCHAIN_API_KEY / LANGCHAIN_PROJECT from
+ * process.env automatically — env.js (via dotenv/config) must have already loaded
+ * the .env file before this runs.  We call this in server.js right after imports.
  */
 export const initializeLangSmith = () => {
   if (!LANGSMITH_CONFIG.ENABLED) {
-    console.log('[LangSmith] ❌ Tracing disabled (set LANGCHAIN_TRACING_V2=true to enable)');
+    console.log('[LangSmith] Tracing disabled (LANGCHAIN_TRACING_V2 != "true")');
     return;
   }
-  
+
   if (!LANGSMITH_CONFIG.API_KEY) {
-    console.warn('[LangSmith] ⚠️  Tracing enabled but LANGCHAIN_API_KEY not set');
+    console.error('[LangSmith] LANGCHAIN_TRACING_V2=true but LANGCHAIN_API_KEY is not set — tracing will NOT work');
     return;
   }
-  
-  console.log('[LangSmith] ✅ Tracing enabled');
-  console.log(`[LangSmith] 📊 Project: ${LANGSMITH_CONFIG.PROJECT}`);
-  console.log(`[LangSmith] 🔗 Dashboard: https://smith.langchain.com/`);
+
+  // Ensure LangChain internals see the env vars even if they were set after module load
+  process.env.LANGCHAIN_TRACING_V2 = 'true';
+  process.env.LANGCHAIN_API_KEY = LANGSMITH_CONFIG.API_KEY;
+  process.env.LANGCHAIN_PROJECT = LANGSMITH_CONFIG.PROJECT;
+  process.env.LANGCHAIN_ENDPOINT = LANGSMITH_CONFIG.ENDPOINT;
+
+  console.log('[LangSmith] Tracing ENABLED');
+  console.log(`[LangSmith] Project : ${LANGSMITH_CONFIG.PROJECT}`);
+  console.log(`[LangSmith] Endpoint: ${LANGSMITH_CONFIG.ENDPOINT}`);
+  console.log(`[LangSmith] Dashboard: https://smith.langchain.com/`);
+};
+
+/**
+ * Build LangChain run config for .invoke() / .stream() calls.
+ * Attaches run name, tags, and metadata so every trace in LangSmith
+ * is properly labelled and searchable.
+ *
+ * Usage:
+ *   await executor.invoke({ input }, getLangSmithRunConfig('expense_agent', userId, traceId));
+ *   await graph.invoke(state, getLangSmithRunConfig('intent_router', userId, traceId));
+ *
+ * @param {string} runName   - Human-readable name shown in LangSmith UI
+ * @param {string} userId    - User context for filtering
+ * @param {string} traceId   - Correlation ID from request
+ * @param {Object} extra     - Additional metadata fields
+ */
+export const getLangSmithRunConfig = (runName, userId, traceId, extra = {}) => {
+  if (!LANGSMITH_CONFIG.ENABLED) return {};
+
+  return {
+    runName,
+    tags: getTraceTags(runName, userId),
+    metadata: getTraceMetadata(traceId, userId, { runName, ...extra }),
+  };
 };
 
 /**
