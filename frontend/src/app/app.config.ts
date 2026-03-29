@@ -10,7 +10,7 @@ import {
   TrendingUp, TrendingDown, Calculator, Tag, Wallet,
   ArrowRight, Search, Pencil, Trash2, Send, Paperclip,
   Upload, AlertCircle, AlertTriangle, RefreshCw,
-  CheckCircle, Info, Database, Cpu, Loader2,
+  CheckCircle, Info, Database, Cpu, Loader2, BookOpen,
 } from 'lucide-angular';
 import { routes } from './app.routes';
 import { jwtInterceptor } from './interceptors/jwt.interceptor';
@@ -28,7 +28,7 @@ export const appConfig: ApplicationConfig = {
       TrendingUp, TrendingDown, Calculator, Tag, Wallet,
       ArrowRight, Search, Pencil, Trash2, Send, Paperclip,
       Upload, AlertCircle, AlertTriangle, RefreshCw,
-      CheckCircle, Info, Database, Cpu, Loader2,
+      CheckCircle, Info, Database, Cpu, Loader2, BookOpen,
     })),
   ]
 };

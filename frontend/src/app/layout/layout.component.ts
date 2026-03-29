@@ -228,7 +228,8 @@ export class LayoutComponent {
   ];
 
   toolNav = [
-    { route: '/debug', icon: 'terminal', label: 'Debug' },
+    { route: '/debug', icon: 'terminal',  label: 'Debug' },
+    { route: '/docs',  icon: 'book-open', label: 'Docs'  },
   ];
 
   allNav = [...this.mainNav, ...this.toolNav];
@@ -248,6 +249,7 @@ export class LayoutComponent {
     if (url.includes('/expenses/edit')) return 'Edit Expense';
     if (url.includes('/expenses')) return 'Expenses';
     if (url.includes('/debug')) return 'Debug';
+    if (url.includes('/docs'))  return 'Docs';
     return 'Overview';
   });
 
