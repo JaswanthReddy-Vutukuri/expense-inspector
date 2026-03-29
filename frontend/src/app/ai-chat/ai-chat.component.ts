@@ -3,6 +3,7 @@ import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, NavigationEnd } from '@angular/router';
 import { LucideAngularModule, Sparkles, Trash2, X, Paperclip, Send, FileText, AlertCircle, Upload, XCircle } from 'lucide-angular';
+import { SimpleMarkdownPipe } from '../shared/pipes/simple-markdown.pipe';
 import { AiChatService, ChatMessage } from '../services/ai-chat.service';
 import { filter, map } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -10,7 +11,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 @Component({
   selector: 'app-ai-chat',
   standalone: true,
-  imports: [DatePipe, FormsModule, LucideAngularModule],
+  imports: [DatePipe, FormsModule, LucideAngularModule, SimpleMarkdownPipe],
   template: `
     <div class="flex flex-col h-full bg-ei-dark text-slate-100">
       <!-- Header -->
@@ -105,7 +106,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
                  [class]="message.role === 'user'
                    ? 'bg-ei-accent text-white rounded-br-md'
                    : 'bg-ei-dark-s border border-ei-dark-b text-slate-200 rounded-bl-md'">
-              <div class="whitespace-pre-wrap break-words">{{ getDisplayContent(message) }}</div>
+              <div class="whitespace-pre-wrap break-words" [innerHTML]="getDisplayContent(message) | simpleMarkdown"></div>
               <div class="text-[9px] mt-1 opacity-50 text-right">
                 {{ message.timestamp | date:'shortTime' }}
               </div>
