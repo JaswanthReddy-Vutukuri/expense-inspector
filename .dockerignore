@@ -1,0 +1,9 @@
+# Root-level .dockerignore — applies when docker-compose builds from the repo root
+.env
+.git
+.gitignore
+**/node_modules
+**/dist
+**/.angular
+**/npm-debug.log*
+# Service-level .dockerignore files handle the rest

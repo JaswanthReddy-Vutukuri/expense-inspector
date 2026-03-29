@@ -23,6 +23,18 @@ async function initDb() {
     )
   `);
 
+  // Seed default categories — INSERT OR IGNORE is safe to run on every startup
+  await db.exec(`
+    INSERT OR IGNORE INTO categories (name, icon) VALUES
+      ('Food', 'default-icon'),
+      ('Transport', 'default-icon'),
+      ('Entertainment', 'default-icon'),
+      ('Shopping', 'default-icon'),
+      ('Bills', 'default-icon'),
+      ('Health', 'default-icon'),
+      ('Other', 'default-icon')
+  `);
+
   // Expenses table
   await db.exec(`
     CREATE TABLE IF NOT EXISTS expenses (

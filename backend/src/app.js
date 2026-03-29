@@ -53,6 +53,11 @@ app.get('/', (req, res) => {
   res.json({ message: 'Welcome to Expense Tracker API. Visit /api-docs for documentation.' });
 });
 
+// Health check — used by docker-compose healthcheck and load balancers
+app.get('/health', (_req, res) => {
+  res.status(200).json({ status: 'OK', service: 'backend' });
+});
+
 // Error Handling
 app.use(errorHandler);
 

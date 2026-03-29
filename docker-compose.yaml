@@ -1,0 +1,197 @@
+# ─── DOCKER COMPOSE — EXPENSE INSPECTOR ────────────────────────────────────────
+#
+# Services:
+#   nginx      — reverse proxy + Angular static files (port 80)
+#   backend    — Express REST API + SQLite  (internal only)
+#   ai-langx   — LangChain AI orchestrator  (internal only)
+#
+# Quick start (first time):
+#   1. cp .env.example .env          # fill in secrets
+#   2. docker compose build          # build all images
+#   3. docker compose up -d          # start in background
+#   4. docker compose logs -f        # tail all logs
+#
+# Rebuild after a code change:
+#   docker compose build <service>   # e.g. docker compose build ai-langx
+#   docker compose up -d <service>   # rolling restart of just that service
+#
+# Stop everything:
+#   docker compose down              # keeps volumes (data preserved)
+#   docker compose down -v           # also deletes volumes (data wiped)
+#
+# ── Platform notes ──────────────────────────────────────────────────────────────
+# This file is platform-agnostic and works on any host running Docker Engine 24+
+# and Docker Compose v2 (the `docker compose` command, not `docker-compose`).
+#
+# DigitalOcean Droplet / AWS EC2 / Hetzner / any Ubuntu VPS:
+#   curl -fsSL https://get.docker.com | sh      # install Docker Engine
+#   apt install docker-compose-plugin            # install Compose v2
+#
+# macOS (local dev):
+#   brew install --cask docker                   # installs Docker Desktop
+#
+# Windows (local dev):
+#   Install Docker Desktop from https://docs.docker.com/desktop/install/windows/
+#
+# ── HTTPS / SSL ─────────────────────────────────────────────────────────────────
+# HTTP (port 80) is intentionally the only exposed port here.
+# To add HTTPS with Let's Encrypt on a real domain:
+#   1. Point your domain's A record to the server's public IP.
+#   2. Stop nginx:  docker compose stop nginx
+#   3. On the host: apt install certbot
+#      certbot certonly --standalone -d yourdomain.com
+#      Certs land in /etc/letsencrypt/live/yourdomain.com/
+#   4. Mount the cert directory into the nginx container (add to nginx volumes):
+#        - /etc/letsencrypt:/etc/letsencrypt:ro
+#   5. Update nginx/nginx.conf to add a listen 443 ssl block and reference the
+#      cert paths. See nginx/nginx.conf comments for details.
+#   6. Expose port 443 in the nginx service below.
+#   7. Auto-renew: certbot installs a systemd timer; no cron needed.
+# ────────────────────────────────────────────────────────────────────────────────
+
+services:
+
+  # ── Nginx ──────────────────────────────────────────────────────────────────
+  # Single public entry point. Routes /api/* to backend, /ai-langchain/* to
+  # ai-langx, and serves the Angular SPA for everything else.
+  nginx:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      # Only nginx is exposed to the host. Backend and ai-langx are internal.
+      - "80:80"
+      # Uncomment after adding HTTPS certs (see SSL notes above):
+      # - "443:443"
+    volumes:
+      # Bind-mount nginx.conf so it can be edited without rebuilding the image.
+      # On a real deploy: edit nginx/nginx.conf, then run:
+      #   docker compose exec nginx nginx -s reload
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      # Uncomment after setting up Let's Encrypt on the host:
+      # - /etc/letsencrypt:/etc/letsencrypt:ro
+    depends_on:
+      backend:
+        condition: service_healthy
+      ai-langx:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - app-net
+
+  # ── Backend ────────────────────────────────────────────────────────────────
+  # Express REST API. Not exposed to the host — only reachable via nginx.
+  # SQLite database is stored in the backend_data named volume so it survives
+  # container rebuilds and image updates.
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    # No ports: exposed — access via nginx only
+    environment:
+      NODE_ENV: production
+      PORT: 3003
+      # DB_PATH points to the named volume directory.
+      # In development (without Docker) db.js falls back to the repo-local path.
+      DB_PATH: /app/data/database.sqlite
+      # Secrets come from the .env file at the repo root.
+      # See .env.example for required values.
+      JWT_SECRET: ${JWT_SECRET}
+      # ALLOWED_ORIGINS — who is allowed to call the API directly (non-proxied).
+      # Inside Docker, the browser never talks to the backend directly —
+      # all requests go through nginx. So ALLOWED_ORIGINS here guards against
+      # direct curl/Postman access from untrusted origins.
+      #
+      # Placeholder — replace with your real domain once deployed:
+      #   ALLOWED_ORIGINS=https://yourdomain.com
+      # For multiple origins (e.g. staging + prod):
+      #   ALLOWED_ORIGINS=https://yourdomain.com,https://staging.yourdomain.com
+      #
+      # Leave empty to disallow all cross-origin direct calls in production:
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-}
+    volumes:
+      # Named volume for SQLite — data survives `docker compose build` and
+      # `docker compose up` restarts. Only wiped by `docker compose down -v`.
+      - backend_data:/app/data
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3003/health"]
+      interval: 15s
+      timeout: 5s
+      start_period: 10s
+      retries: 3
+    restart: unless-stopped
+    networks:
+      - app-net
+
+  # ── AI LangChain ───────────────────────────────────────────────────────────
+  # LangChain + LangGraph orchestrator. Internal only — accessed via nginx.
+  # Vector store (uploaded PDF embeddings) is persisted in ai_langx_data volume.
+  ai-langx:
+    build:
+      context: ./ai-langx
+      dockerfile: Dockerfile
+    # No ports: — access via nginx only
+    environment:
+      NODE_ENV: production
+      PORT: 3002
+      # OpenAI
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      LLM_MODEL: ${LLM_MODEL:-gpt-4o-mini}
+      EMBEDDING_MODEL: ${EMBEDDING_MODEL:-text-embedding-ada-002}
+      # LangSmith — optional. Set LANGCHAIN_TRACING_V2=false to disable.
+      # To enable: set LANGCHAIN_API_KEY and LANGCHAIN_PROJECT in .env.
+      # Traces will appear at https://smith.langchain.com under that project.
+      LANGCHAIN_TRACING_V2: ${LANGCHAIN_TRACING_V2:-false}
+      LANGCHAIN_API_KEY: ${LANGCHAIN_API_KEY:-}
+      LANGCHAIN_PROJECT: ${LANGCHAIN_PROJECT:-expense-tracker-ai-langx}
+      LANGCHAIN_ENDPOINT: ${LANGCHAIN_ENDPOINT:-https://api.smith.langchain.com}
+      # Agent tuning — safe defaults, override in .env if needed
+      MAX_AGENT_ITERATIONS: ${MAX_AGENT_ITERATIONS:-5}
+      AGENT_TIMEOUT_MS: ${AGENT_TIMEOUT_MS:-60000}
+      # Backend connection — uses Docker service name (not localhost)
+      # docker-compose internal DNS resolves "backend" to the backend container IP.
+      BACKEND_BASE_URL: http://backend:3003
+      # JWT must match the backend's JWT_SECRET exactly
+      JWT_SECRET: ${JWT_SECRET}
+      # ALLOWED_ORIGINS — same guidance as backend above.
+      # In practice, ai-langx is only called from nginx (same Docker network),
+      # so CORS here guards direct external access only.
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-}
+      # Enable debug routes in production only if explicitly needed.
+      # Set ENABLE_DEBUG_ROUTES=true in .env to expose /ai/debug/* via nginx.
+      ENABLE_DEBUG_ROUTES: ${ENABLE_DEBUG_ROUTES:-false}
+    volumes:
+      # Named volume for LangChain vector store (langchain-store.json).
+      # Uploaded PDF embeddings persist across redeploys.
+      # Only wiped by `docker compose down -v`.
+      - ai_langx_data:/app/data
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3002/health"]
+      interval: 15s
+      timeout: 5s
+      start_period: 20s
+      retries: 3
+    restart: unless-stopped
+    networks:
+      - app-net
+
+# ── Volumes ────────────────────────────────────────────────────────────────────
+# Named volumes are managed by Docker and survive container rebuilds.
+# Location on Linux host: /var/lib/docker/volumes/<name>/_data
+# To back up:
+#   docker run --rm -v backend_data:/data -v $(pwd):/backup alpine \
+#     tar czf /backup/backend_data_backup.tar.gz -C /data .
+volumes:
+  backend_data:
+  ai_langx_data:
+
+# ── Networks ───────────────────────────────────────────────────────────────────
+# All services share one bridge network. Docker's internal DNS lets containers
+# resolve each other by service name (e.g. "backend", "ai-langx").
+# No service is reachable from the host except through nginx on port 80.
+networks:
+  app-net:
+    driver: bridge

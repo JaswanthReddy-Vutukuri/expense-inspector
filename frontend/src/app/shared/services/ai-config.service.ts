@@ -30,6 +30,6 @@ export class AiConfigService {
 
   private loadLayer(): AiLayer {
     const stored = localStorage.getItem(this.STORAGE_KEY);
-    return stored === 'langchain' ? 'langchain' : 'vanilla';
+    return stored === 'vanilla' ? 'vanilla' : 'langchain';
   }
 }
