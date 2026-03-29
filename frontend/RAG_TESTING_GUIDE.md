@@ -37,7 +37,7 @@ The system automatically routes to appropriate handlers:
 
 ```bash
 # 1. Login to get token
-curl -X POST http://localhost:3000/auth/login \
+curl -X POST http://localhost:3003/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email": "demo@example.com", "password": "password123"}'
 

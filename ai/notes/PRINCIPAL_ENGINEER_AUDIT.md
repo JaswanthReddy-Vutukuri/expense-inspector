@@ -1429,7 +1429,7 @@ PORT=3001
 NODE_ENV=production
 
 # Backend API
-BACKEND_BASE_URL=http://localhost:3000
+BACKEND_BASE_URL=http://localhost:3003
 
 # Security
 ALLOWED_ORIGINS=http://localhost:4200,https://yourdomain.com

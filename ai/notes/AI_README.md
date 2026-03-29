@@ -137,7 +137,7 @@ GET /ai/debug/health         # Health check
 ```env
 OPENAI_API_KEY=your_openai_key     # For embeddings
 LLM_API_KEY=your_llm_key           # For chat completions
-BACKEND_URL=http://localhost:3000  # Backend API URL
+BACKEND_URL=http://localhost:3003  # Backend API URL
 ```
 
 ### Optional Configuration

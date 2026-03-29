@@ -1,0 +1,114 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html { scroll-behavior: smooth; }
+  body {
+    @apply bg-ei-bg text-ei-text font-sans antialiased;
+    margin: 0;
+  }
+  h1, h2, h3, h4 { @apply font-sans; }
+  code { font-family: 'Fira Code', 'JetBrains Mono', monospace; }
+}
+
+@layer components {
+  /* Section label — tiny uppercase monospace accent */
+  .section-label {
+    @apply text-[10px] font-mono uppercase tracking-widest text-ei-accent mb-1;
+  }
+
+  /* Card — surface with border, subtle hover */
+  .card {
+    @apply bg-ei-surface border border-ei-border rounded-xl p-6
+           hover:border-ei-accent/30 transition-colors duration-200;
+  }
+
+  /* Form input */
+  .ei-input {
+    @apply w-full px-3 py-2.5 bg-ei-bg border border-ei-border rounded-lg
+           text-ei-text text-sm placeholder-ei-muted
+           focus:outline-none focus:border-ei-accent focus:ring-2 focus:ring-ei-accent/20
+           transition-all duration-200;
+  }
+
+  /* Select (native) */
+  .ei-select {
+    @apply ei-input appearance-none bg-no-repeat bg-right pr-8;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-position: right 0.75rem center;
+  }
+
+  /* Buttons */
+  .ei-btn-primary {
+    @apply inline-flex items-center justify-center gap-2
+           px-4 py-2.5 bg-ei-accent text-white rounded-lg text-sm font-medium
+           hover:bg-ei-accent-d active:scale-[0.98] transition-all duration-200
+           disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100;
+  }
+
+  .ei-btn-secondary {
+    @apply inline-flex items-center justify-center gap-2
+           px-4 py-2.5 bg-transparent border border-ei-border text-ei-subtle rounded-lg text-sm font-medium
+           hover:border-ei-accent/40 hover:text-ei-text active:scale-[0.98] transition-all duration-200;
+  }
+
+  .ei-btn-danger {
+    @apply inline-flex items-center justify-center gap-2
+           px-4 py-2.5 bg-ei-rose/10 border border-ei-rose/30 text-red-700 rounded-lg text-sm font-medium
+           hover:bg-ei-rose/20 active:scale-[0.98] transition-all duration-200;
+  }
+
+  .ei-btn-ghost {
+    @apply inline-flex items-center justify-center gap-2
+           px-2 py-1.5 text-ei-muted rounded-lg text-sm
+           hover:bg-ei-bg hover:text-ei-text transition-colors duration-200;
+  }
+
+  /* Badges */
+  .badge {
+    @apply inline-flex items-center gap-1 px-2.5 py-0.5 text-xs font-medium rounded-full border;
+  }
+
+  .badge-accent {
+    @apply bg-ei-accent/10 border-ei-accent/20 text-ei-accent-d;
+  }
+
+  .badge-emerald {
+    @apply bg-emerald-50 border-emerald-200 text-emerald-700;
+  }
+
+  .badge-rose {
+    @apply bg-red-50 border-red-200 text-red-700;
+  }
+
+  .badge-amber {
+    @apply bg-amber-50 border-amber-200 text-amber-700;
+  }
+
+  .badge-cyan {
+    @apply bg-sky-50 border-sky-200 text-sky-700;
+  }
+
+  .badge-slate {
+    @apply bg-slate-100 border-slate-200 text-slate-600;
+  }
+
+  /* Skeleton loading */
+  .skeleton {
+    @apply bg-ei-border/60 rounded-md animate-pulse;
+  }
+}
+
+@layer utilities {
+  .scrollbar-thin::-webkit-scrollbar { width: 4px; }
+  .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+  .scrollbar-thin::-webkit-scrollbar-thumb { @apply bg-ei-border rounded-full; }
+
+  .scrollbar-dark::-webkit-scrollbar { width: 4px; }
+  .scrollbar-dark::-webkit-scrollbar-track { background: transparent; }
+  .scrollbar-dark::-webkit-scrollbar-thumb { @apply bg-ei-dark-b rounded-full; }
+
+  .scrollbar-none::-webkit-scrollbar { display: none; }
+  .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
+}

@@ -40,7 +40,7 @@ OPENAI_API_KEY=sk-...
 LLM_API_KEY=your_key_here
 
 # REQUIRED - Backend URL
-BACKEND_URL=http://localhost:3000
+BACKEND_URL=http://localhost:3003
 
 # OPTIONAL - Defaults shown
 PORT=3001
@@ -66,7 +66,7 @@ node -e "require('dotenv').config(); console.log('✓ OPENAI_API_KEY:', process.
 
 **Check backend is running:**
 ```bash
-curl http://localhost:3000/health
+curl http://localhost:3003/health
 ```
 
 Expected: `200 OK` response
@@ -114,7 +114,7 @@ npm start
 **Expected Output:**
 ```
 🚀 AI Orchestrator running on http://localhost:3001
-🔗 Backend URL: http://localhost:3000
+🔗 Backend URL: http://localhost:3003
 ```
 
 ---
@@ -231,7 +231,7 @@ curl -X POST http://localhost:3001/ai/chat \
 
 **First, ensure you have expenses in the app:**
 ```bash
-curl -X GET http://localhost:3000/api/expenses \
+curl -X GET http://localhost:3003/api/expenses \
   -H "Authorization: Bearer YOUR_JWT"
 ```
 
@@ -308,7 +308,7 @@ echo "OPENAI_API_KEY=your_key_here" >> .env
 **Solution:**
 ```bash
 # Check backend is running
-curl http://localhost:3000/health
+curl http://localhost:3003/health
 
 # If not, start backend:
 cd ../backend
@@ -320,7 +320,7 @@ npm start
 ```bash
 # Get a fresh JWT token
 # Login via frontend or:
-curl -X POST http://localhost:3000/api/auth/login \
+curl -X POST http://localhost:3003/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email": "user@example.com", "password": "password"}'
 ```

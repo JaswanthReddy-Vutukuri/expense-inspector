@@ -385,7 +385,7 @@ export const generateSyncedExpenseReport = async (authToken, userId, addToPdfExp
     // We need to fetch directly from backend for structured data
     const axios = (await import('axios')).default;
     const response = await axios.get(
-      `${process.env.BACKEND_BASE_URL || 'http://localhost:3000'}/api/expenses`,
+      `${process.env.BACKEND_BASE_URL || 'http://localhost:3003'}/api/expenses`,
       {
         headers: { 'Authorization': `Bearer ${authToken}` },
         params: { limit: 1000 }

@@ -11,7 +11,7 @@
 
 import axios from 'axios';
 
-const BACKEND_BASE_URL = process.env.BACKEND_URL || 'http://localhost:3000';
+const BACKEND_BASE_URL = process.env.BACKEND_URL || 'http://localhost:3003';
 
 /**
  * Create backend API client with authentication

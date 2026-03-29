@@ -13,7 +13,7 @@ A production-ready Angular application for tracking expenses, featuring authenti
 ## Prerequisites
 - **Node.js**: v18.0.0 or higher
 - **NPM**: v9.0.0 or higher
-- **Backend API**: Expects a running backend at `http://localhost:3000/api` (configurable in `environment.ts`)
+- **Backend API**: Expects a running backend at `http://localhost:3003/api` (configurable in `environment.ts`)
 
 ## Installation
 

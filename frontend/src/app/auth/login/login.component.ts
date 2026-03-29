@@ -1,63 +1,63 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
+import { LucideAngularModule, Receipt } from 'lucide-angular';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [
-    CommonModule, 
-    ReactiveFormsModule, 
-    RouterLink,
-    MatCardModule, 
-    MatFormFieldModule, 
-    MatInputModule, 
-    MatButtonModule
-  ],
+  imports: [ReactiveFormsModule, RouterLink, LucideAngularModule],
   template: `
-    <div class="auth-container">
-      <mat-card class="auth-card">
-        <mat-card-header>
-          <mat-card-title>Login</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-            <mat-form-field appearance="outline" class="full-width">
-              <mat-label>Email</mat-label>
-              <input matInput type="email" formControlName="email">
-              <mat-error *ngIf="loginForm.get('email')?.hasError('required')">Email is required</mat-error>
-              <mat-error *ngIf="loginForm.get('email')?.hasError('email')">Please enter a valid email</mat-error>
-            </mat-form-field>
+    <div class="min-h-screen flex items-center justify-center bg-ei-bg px-4">
+      <div class="w-full max-w-md animate-fade-in">
+        <!-- Brand -->
+        <div class="text-center mb-8">
+          <div class="inline-flex items-center gap-2.5 mb-3">
+            <div class="w-10 h-10 rounded-xl bg-ei-accent/10 flex items-center justify-center">
+              <lucide-icon name="receipt" [size]="22" class="text-ei-accent"></lucide-icon>
+            </div>
+          </div>
+          <h1 class="text-2xl font-bold text-ei-text">Expense Inspector</h1>
+          <p class="section-label mt-2">Sign in to your account</p>
+        </div>
 
-            <mat-form-field appearance="outline" class="full-width">
-              <mat-label>Password</mat-label>
-              <input matInput type="password" formControlName="password">
-              <mat-error *ngIf="loginForm.get('password')?.hasError('required')">Password is required</mat-error>
-            </mat-form-field>
+        <!-- Card -->
+        <div class="card">
+          <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-4">
+            <div>
+              <label class="text-xs font-mono text-ei-subtle mb-1.5 block">Email</label>
+              <input type="email" formControlName="email" class="ei-input" placeholder="you&#64;example.com" autocomplete="email">
+              @if (loginForm.get('email')?.touched && loginForm.get('email')?.hasError('required')) {
+                <p class="text-xs text-ei-rose mt-1">Email is required</p>
+              }
+              @if (loginForm.get('email')?.touched && loginForm.get('email')?.hasError('email')) {
+                <p class="text-xs text-ei-rose mt-1">Please enter a valid email</p>
+              }
+            </div>
 
-            <button mat-raised-button color="primary" class="full-width" type="submit" [disabled]="loginForm.invalid || loading">
-              {{ loading ? 'Logging in...' : 'Login' }}
+            <div>
+              <label class="text-xs font-mono text-ei-subtle mb-1.5 block">Password</label>
+              <input type="password" formControlName="password" class="ei-input" placeholder="Enter password" autocomplete="current-password">
+              @if (loginForm.get('password')?.touched && loginForm.get('password')?.hasError('required')) {
+                <p class="text-xs text-ei-rose mt-1">Password is required</p>
+              }
+            </div>
+
+            <button type="submit" [disabled]="loginForm.invalid || loading" class="ei-btn-primary w-full">
+              {{ loading ? 'Signing in...' : 'Sign In' }}
             </button>
           </form>
-          <div class="auth-footer">
-            Don't have an account? <a routerLink="/auth/register">Register</a>
-          </div>
-        </mat-card-content>
-      </mat-card>
+
+          <p class="text-center text-sm text-ei-muted mt-6">
+            Don't have an account?
+            <a routerLink="/auth/register" class="text-ei-accent hover:text-ei-accent-d font-medium transition-colors">Register</a>
+          </p>
+        </div>
+      </div>
     </div>
   `,
-  styles: [`
-    .auth-container { display: flex; justify-content: center; align-items: center; height: 100vh; background: #f5f5f5; }
-    .auth-card { width: 100%; max-width: 400px; padding: 16px; }
-    .full-width { width: 100%; margin-bottom: 16px; }
-    .auth-footer { margin-top: 16px; text-align: center; }
-  `]
+  styles: []
 })
 export class LoginComponent {
   loginForm: FormGroup;

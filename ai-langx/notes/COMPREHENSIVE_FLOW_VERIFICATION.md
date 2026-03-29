@@ -901,7 +901,7 @@ POST /ai/reconcile (stream: true)
 ├────────────────────────────────────┤
 │ Custom (ai/server.js): 3001        │
 │ LangChain (ai-langx/server.js): 3002
-│ Backend (backend/): 3000           │
+│ Backend (backend/): 3003           │
 │ Frontend (Angular): 4200           │
 └────────────────────────────────────┘
 
@@ -930,7 +930,7 @@ ERROR HANDLING:
 ```
 REQUIRED:
 ├─ OPENAI_API_KEY=sk_...
-├─ BACKEND_BASE_URL=http://localhost:3000
+├─ BACKEND_BASE_URL=http://localhost:3003
 ├─ JWT_SECRET=your_secret_key
 
 OPTIONAL:

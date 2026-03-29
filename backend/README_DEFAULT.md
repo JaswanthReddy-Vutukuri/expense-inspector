@@ -41,7 +41,7 @@ Run the compiled-ready code:
 
 ## API Documentation
 Once the server is running, visit:
-`http://localhost:3000/api-docs`
+`http://localhost:3003/api-docs`
 
 ## Usage Examples
 

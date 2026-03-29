@@ -194,7 +194,7 @@ initialize
   → Set stage: "fetch_app_expenses"
   ↓
 fetch_app
-  → GET http://localhost:3000/expenses
+  → GET http://localhost:3003/expenses
   → Headers: { Authorization: "Bearer ..." }
   → Response: { expenses: [2 expenses] }
   → Set appExpenses: [2 items]

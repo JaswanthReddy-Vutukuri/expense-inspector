@@ -3,7 +3,7 @@
 ## Prerequisites
 - Node.js 18+ installed
 - OpenAI API key (for embeddings)
-- Backend service running on http://localhost:3000
+- Backend service running on http://localhost:3003
 - Valid JWT token from backend
 
 ---
@@ -31,7 +31,7 @@ Create a `.env` file in the `ai/` folder:
 # Required
 OPENAI_API_KEY=your_openai_api_key_here
 LLM_API_KEY=your_llm_api_key_here
-BACKEND_URL=http://localhost:3000
+BACKEND_URL=http://localhost:3003
 
 # Optional (defaults shown)
 PORT=3001
@@ -182,7 +182,7 @@ npm install
 - Add `OPENAI_API_KEY=your_key_here`
 
 ### "Connection refused" to backend
-- Ensure backend is running on http://localhost:3000
+- Ensure backend is running on http://localhost:3003
 - Update `BACKEND_URL` in `.env` if different
 
 ### "Unauthorized" errors

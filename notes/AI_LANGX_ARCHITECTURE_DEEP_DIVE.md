@@ -75,7 +75,7 @@
                                │
                                ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│                   BACKEND APIs (Port 3000)                       │
+│                   BACKEND APIs (Port 3003)                       │
 │         /expenses | /categories | /auth (unchanged)              │
 └─────────────────────────────────────────────────────────────────┘
 ```
@@ -2201,7 +2201,7 @@ const llm = new ChatOpenAI({
 ### 9.1 Demo Setup
 
 **Prerequisites**:
-1. Backend running on port 3000
+1. Backend running on port 3003
 2. ai-langx running on port 3002
 3. LangSmith tracing enabled
 4. Sample PDF uploaded
@@ -2217,7 +2217,7 @@ LANGCHAIN_API_KEY=ls_...
 LANGCHAIN_PROJECT=expense-tracker-demo
 
 # Backend
-BACKEND_URL=http://localhost:3000
+BACKEND_URL=http://localhost:3003
 ```
 
 ### 9.2 Demo Flow
@@ -2433,7 +2433,7 @@ LANGCHAIN_PROJECT=expense-tracker-ai-langx
 LANGCHAIN_ENDPOINT=https://api.smith.langchain.com
 
 # Backend
-BACKEND_URL=http://localhost:3000
+BACKEND_URL=http://localhost:3003
 
 # Server
 PORT=3002

@@ -118,7 +118,7 @@ app.listen(PORT, () => {
   console.log('  🚀 AI-LANGX ORCHESTRATOR (LangChain Implementation)  ');
   console.log('═══════════════════════════════════════════════════════');
   console.log(`  📍 Server:    http://localhost:${PORT}`);
-  console.log(`  🔗 Backend:   ${process.env.BACKEND_BASE_URL || 'http://localhost:3000'}`);
+  console.log(`  🔗 Backend:   ${process.env.BACKEND_BASE_URL || 'http://localhost:3003'}`);
   console.log(`  🧠 LLM:       ${process.env.LLM_MODEL || 'gpt-4o-mini'}`);
   console.log(`  📊 LangSmith: ${process.env.LANGCHAIN_TRACING_V2 === 'true' ? '✅ ENABLED' : '❌ DISABLED'}`);
   console.log(`  🏠 Project:   ${process.env.LANGCHAIN_PROJECT || 'expense-tracker-ai-langx'}`);

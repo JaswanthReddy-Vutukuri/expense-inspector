@@ -7,7 +7,7 @@ Get the LangChain-based AI orchestrator running in 5 minutes.
 ## Prerequisites
 
 ✅ Node.js 18+ installed  
-✅ Backend server running on port 3000  
+✅ Backend server running on port 3003  
 ✅ OpenAI API key  
 ✅ LangSmith API key (optional, for tracing)
 
@@ -45,7 +45,7 @@ nano .env  # or use your preferred editor
 **Required variables**:
 ```env
 OPENAI_API_KEY=sk-your-openai-api-key-here
-BACKEND_BASE_URL=http://localhost:3000
+BACKEND_BASE_URL=http://localhost:3003
 ```
 
 **Optional (for LangSmith tracing)**:
@@ -71,7 +71,7 @@ You should see:
   🚀 AI-LANGX ORCHESTRATOR (LangChain Implementation)  
 ═══════════════════════════════════════════════════════════
   📍 Server:    http://localhost:3002
-  🔗 Backend:   http://localhost:3000
+  🔗 Backend:   http://localhost:3003
   🧠 LLM:       gpt-4o-mini
   📊 LangSmith: ✅ ENABLED
   🏠 Project:   expense-tracker-ai-langx
@@ -86,7 +86,7 @@ You need a JWT token to authenticate. Get it from the backend:
 
 ```bash
 # Login to backend
-curl -X POST http://localhost:3000/api/auth/login \
+curl -X POST http://localhost:3003/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{
     "email": "test@example.com",
@@ -250,7 +250,7 @@ curl -X POST http://localhost:3002/ai/chat \
 ### Backend connection failed
 
 **Error**: `Cannot connect to backend`  
-**Solution**: Ensure backend is running on `http://localhost:3000`
+**Solution**: Ensure backend is running on `http://localhost:3003`
 
 ---
 
@@ -272,7 +272,7 @@ curl -X POST http://localhost:3002/ai/chat \
 | Custom Chat | http://localhost:3001/ai/chat |
 | Health Check | http://localhost:3002/health |
 | Endpoint Info | http://localhost:3002/ai/chat/info |
-| Backend API | http://localhost:3000/api |
+| Backend API | http://localhost:3003/api |
 | LangSmith | https://smith.langchain.com/ |
 
 ---

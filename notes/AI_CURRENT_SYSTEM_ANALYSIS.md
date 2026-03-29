@@ -96,7 +96,7 @@ ai/
                      │ HTTP (JWT Forward)
                      │
 ┌────────────────────▼────────────────────────────────────────────┐
-│              NODE.JS + SQLITE BACKEND (port 3000)                │
+│              NODE.JS + SQLITE BACKEND (port 3003)                │
 │          RESTful APIs for Expense CRUD, Categories, Auth         │
 └──────────────────────────────────────────────────────────────────┘
 ```
@@ -122,7 +122,7 @@ app.use('/ai', uploadRoutes); // PDF upload
 app.use('/ai', debugRoutes);  // Debug tools (dev only)
 ```
 
-**Port**: 3001 (hardcoded, different from backend 3000)
+**Port**: 3001 (hardcoded, different from backend 3003)
 
 **Production Features**:
 - JWT authentication middleware
@@ -750,7 +750,7 @@ async function processChatMessage(userMessage, authToken, history, context) {
 
 ```javascript
 async function executeToolSafely(toolFn, args, toolName, options) {
-  const { timeout = 30000, maxRetries = 2, context = {} } = options;
+  const { timeout = 30030, maxRetries = 2, context = {} } = options;
   
   let lastError;
   
@@ -1262,7 +1262,7 @@ AI Orchestrator (Express on port 3001)
     │       │   └─→ Backend API Call
     │       │       │
     │       │       ▼
-    │       │   Backend (Node + SQLite on port 3000)
+    │       │   Backend (Node + SQLite on port 3003)
     │       │       │
     │       │       ├─→ Validate JWT
     │       │       ├─→ Insert to expenses table
@@ -1891,7 +1891,7 @@ LLM_MODEL=gpt-4o-mini
 LLM_BASE_URL=https://api.openai.com/v1  # Optional
 
 # Backend
-BACKEND_BASE_URL=http://localhost:3000
+BACKEND_BASE_URL=http://localhost:3003
 JWT_SECRET=your-secret-key
 
 # Security
@@ -1955,7 +1955,7 @@ Response:
   }
 ```
 
-### Backend (port 3000)
+### Backend (port 3003)
 
 **Expenses**:
 ```

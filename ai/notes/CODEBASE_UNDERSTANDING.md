@@ -29,7 +29,7 @@ This is an **enterprise-grade, AI-powered expense tracking system** with three d
                  ├──→ REST API Calls
                  │
 ┌────────────────▼────────────────────────────────┐
-│   BACKEND API (Express) - Port 3000            │
+│   BACKEND API (Express) - Port 3003            │
 │   • User Authentication (bcrypt + JWT)          │
 │   • Expense CRUD with validation                │
 │   • SQLite database                             │
@@ -50,7 +50,7 @@ This is an **enterprise-grade, AI-powered expense tracking system** with three d
 
 ---
 
-## 🔧 BACKEND (Port 3000)
+## 🔧 BACKEND (Port 3003)
 
 ### Technology Stack
 - **Runtime**: Node.js 18+

@@ -195,7 +195,7 @@ export const handleComparison = async (userMessage, userId, authToken, options =
     
     // Step 2: Fetch app expenses from backend
     console.log('[Compare Handler] Fetching app expenses from backend...');
-    const backendUrl = process.env.BACKEND_URL || 'http://localhost:3000';
+    const backendUrl = process.env.BACKEND_URL || 'http://localhost:3003';
     
     const response = await axios.get(`${backendUrl}/api/expenses`, {
       params: { limit: 1000 },

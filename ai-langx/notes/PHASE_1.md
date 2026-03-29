@@ -93,7 +93,7 @@ This implementation demonstrates **production-grade AI orchestration** using Lan
 # Node.js 18+
 node --version
 
-# Backend running on port 3000
+# Backend running on port 3003
 # Frontend running on port 4200 (optional)
 ```
 
@@ -130,7 +130,7 @@ npm start
 
 ```bash
 # Get JWT token from backend
-curl -X POST http://localhost:3000/api/auth/login \
+curl -X POST http://localhost:3003/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email":"test@example.com","password":"password123"}'
 

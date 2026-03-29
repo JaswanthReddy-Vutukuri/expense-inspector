@@ -83,5 +83,5 @@ app.use((req, res) => {
 
 app.listen(PORT, () => {
   console.log(`🚀 AI Orchestrator running on http://localhost:${PORT}`);
-  console.log(`🔗 Backend URL: ${process.env.BACKEND_BASE_URL || 'http://localhost:3000'}`);
+  console.log(`🔗 Backend URL: ${process.env.BACKEND_BASE_URL || 'http://localhost:3003'}`);
 });

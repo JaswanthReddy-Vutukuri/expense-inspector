@@ -226,7 +226,7 @@ LANGCHAIN_PROJECT=ai-langx-prod
 LANGCHAIN_ENDPOINT=https://api.smith.langchain.com
 
 # Backend API
-BACKEND_API_URL=http://localhost:3000
+BACKEND_API_URL=http://localhost:3003
 BACKEND_API_TIMEOUT=30000
 
 # Server
@@ -638,7 +638,7 @@ export class CreateExpenseTool extends StructuredTool {
 // LangSmith trace:
 // CreateExpenseTool (0.3s, $0)
 // ├─ Input: { amount: 500, category: "Food", description: "Lunch" }
-// ├─ API Call: POST http://localhost:3000/api/expenses
+// ├─ API Call: POST http://localhost:3003/api/expenses
 // └─ Output: {"success": true, "expenseId": 123, "message": "..."}
 ```
 
@@ -1804,7 +1804,7 @@ PORT=3001
 OPENAI_API_KEY=sk-...
 LANGCHAIN_TRACING_V2=true
 LANGCHAIN_PROJECT=ai-langx-dev
-BACKEND_API_URL=http://localhost:3000
+BACKEND_API_URL=http://localhost:3003
 
 # .env.production
 NODE_ENV=production
@@ -1863,7 +1863,7 @@ services:
       - LANGCHAIN_API_KEY=${LANGCHAIN_API_KEY}
       - LANGCHAIN_TRACING_V2=true
       - LANGCHAIN_PROJECT=ai-langx-prod
-      - BACKEND_API_URL=http://backend:3000
+      - BACKEND_API_URL=http://backend:3003
     depends_on:
       - backend
     restart: unless-stopped
@@ -1876,7 +1876,7 @@ services:
   backend:
     image: your-backend-image
     ports:
-      - "3000:3000"
+      - "3003:3003"
     environment:
       - NODE_ENV=production
       - DATABASE_URL=${DATABASE_URL}
@@ -2634,7 +2634,7 @@ OPENAI_API_KEY=your-key
 LANGCHAIN_TRACING_V2=true
 LANGCHAIN_API_KEY=your-langsmith-key
 LANGCHAIN_PROJECT=ai-langx-prod
-BACKEND_API_URL=http://localhost:3000
+BACKEND_API_URL=http://localhost:3003
 RATE_LIMIT_MAX_REQUESTS=20
 ENABLE_LLM_CACHE=true
 JWT_SECRET=your-secret

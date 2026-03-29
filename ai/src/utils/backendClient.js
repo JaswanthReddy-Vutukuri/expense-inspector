@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BACKEND_URL = process.env.BACKEND_BASE_URL || 'http://localhost:3000';
+const BACKEND_URL = process.env.BACKEND_BASE_URL || 'http://localhost:3003';
 const API_PREFIX = '/api'; // Backend routes are mounted under /api
 
 /**

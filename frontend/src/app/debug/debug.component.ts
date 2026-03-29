@@ -1,276 +1,161 @@
 import { Component, OnInit, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { MatCardModule } from '@angular/material/card';
-import { MatButtonModule } from '@angular/material/button';
-import { MatTableModule } from '@angular/material/table';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
+import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { LucideAngularModule, RefreshCw, Search, Database, FileText, Cpu, AlertTriangle } from 'lucide-angular';
 import { DebugService, VectorStoreStats, ChunkInfo, DocumentInfo } from '../services/debug.service';
 
 @Component({
   selector: 'app-debug',
   standalone: true,
-  imports: [
-    CommonModule,
-    MatCardModule,
-    MatButtonModule,
-    MatTableModule,
-    MatInputModule,
-    MatFormFieldModule,
-    FormsModule
-  ],
+  imports: [CommonModule, FormsModule, LucideAngularModule, DatePipe],
   template: `
-    <div class="debug-container">
-      <h1>Debug & Observability Dashboard</h1>
+    <div class="max-w-5xl mx-auto space-y-6 animate-fade-in">
+      <div>
+        <p class="section-label">System</p>
+        <h1 class="text-2xl font-bold text-ei-text">Debug & Observability</h1>
+      </div>
 
-      <!-- Stats Card -->
-      <mat-card class="stats-card">
-        <mat-card-header>
-          <mat-card-title>Vector Store Statistics</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          @if (embeddingInfo()) {
-            @if (embeddingInfo()!.dimensionMismatch) {
-              <div class="error-banner" style="margin-bottom: 20px; padding: 15px; background: #fff3cd; border-left: 4px solid #ff9800; border-radius: 4px;">
-                <strong>⚠️ Embedding Model Mismatch Detected</strong>
-                <p style="margin: 10px 0 0 0;">{{ embeddingInfo()!.recommendation }}</p>
+      <!-- Embedding mismatch warning -->
+      @if (embeddingInfo()?.dimensionMismatch) {
+        <div class="flex items-start gap-3 px-4 py-3 rounded-xl bg-amber-50 border border-amber-200">
+          <lucide-icon name="alert-triangle" [size]="16" class="text-ei-amber mt-0.5 flex-shrink-0"></lucide-icon>
+          <div>
+            <p class="text-sm font-medium text-amber-800">Embedding Model Mismatch</p>
+            <p class="text-xs text-amber-700 mt-0.5">{{ embeddingInfo()!.recommendation }}</p>
+          </div>
+        </div>
+      }
+
+      <!-- Stats -->
+      <div class="card">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-[10px] font-mono text-ei-accent uppercase tracking-widest">Vector Store Statistics</h2>
+          <button (click)="loadStats()" class="ei-btn-ghost text-xs">
+            <lucide-icon name="refresh-cw" [size]="12"></lucide-icon> Refresh
+          </button>
+        </div>
+        @if (stats()) {
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            @for (item of statItems(); track item.label) {
+              <div class="bg-ei-bg rounded-lg p-3 border border-ei-border/50">
+                <p class="text-[10px] font-mono text-ei-muted uppercase tracking-wider">{{ item.label }}</p>
+                <p class="text-xl font-bold text-ei-text font-mono mt-1">{{ item.value }}</p>
               </div>
             }
-          }
-          @if (stats()) {
-            <div class="stats-grid">
-              <div class="stat-item">
-                <span class="stat-label">Total Documents:</span>
-                <span class="stat-value">{{ stats()!.totalDocuments }}</span>
+          </div>
+        } @else {
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            @for (i of [1,2,3,4,5,6]; track i) {
+              <div class="bg-ei-bg rounded-lg p-3 border border-ei-border/50">
+                <div class="skeleton h-3 w-20 mb-2"></div>
+                <div class="skeleton h-7 w-16"></div>
               </div>
-              <div class="stat-item">
-                <span class="stat-label">Total Chunks:</span>
-                <span class="stat-value">{{ stats()!.totalChunks }}</span>
-              </div>
-              <div class="stat-item">
-                <span class="stat-label">Total Expenses:</span>
-                <span class="stat-value">{{ stats()!.totalExpenses }}</span>
-              </div>
-              <div class="stat-item">
-                <span class="stat-label">Embedding Dimension:</span>
-                <span class="stat-value">{{ stats()!.embeddingDimension }}</span>
-              </div>
-              <div class="stat-item">
-                <span class="stat-label">Node Version:</span>
-                <span class="stat-value">{{ stats()!.systemInfo.nodeVersion }}</span>
-              </div>
-              <div class="stat-item">
-                <span class="stat-label">Uptime:</span>
-                <span class="stat-value">{{ formatUptime(stats()!.systemInfo.uptime) }}</span>
-              </div>
-            </div>
-          } @else {
-            <p>Loading...</p>
-          }
-        </mat-card-content>
-        <mat-card-actions>
-          <button mat-raised-button color="primary" (click)="loadStats()">Refresh Stats</button>
-        </mat-card-actions>
-      </mat-card>
+            }
+          </div>
+        }
+      </div>
 
-      <!-- Documents Card -->
-      <mat-card class="documents-card">
-        <mat-card-header>
-          <mat-card-title>Uploaded Documents</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          @if (documents().length > 0) {
-            <table mat-table [dataSource]="documents()" class="debug-table">
-              <ng-container matColumnDef="filename">
-                <th mat-header-cell *matHeaderCellDef>Filename</th>
-                <td mat-cell *matCellDef="let doc">{{ doc.filename }}</td>
-              </ng-container>
-              <ng-container matColumnDef="numChunks">
-                <th mat-header-cell *matHeaderCellDef>Chunks</th>
-                <td mat-cell *matCellDef="let doc">{{ doc.numChunks }}</td>
-              </ng-container>
-              <ng-container matColumnDef="uploadedAt">
-                <th mat-header-cell *matHeaderCellDef>Uploaded</th>
-                <td mat-cell *matCellDef="let doc">{{ doc.uploadedAt | date:'short' }}</td>
-              </ng-container>
-              <tr mat-header-row *matHeaderRowDef="documentColumns"></tr>
-              <tr mat-row *matRowDef="let row; columns: documentColumns;"></tr>
-            </table>
-          } @else {
-            <p>No documents found. Upload a PDF to see data.</p>
-          }
-        </mat-card-content>
-        <mat-card-actions>
-          <button mat-raised-button color="primary" (click)="loadDocuments()">Refresh Documents</button>
-        </mat-card-actions>
-      </mat-card>
+      <!-- Documents -->
+      <div class="card">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-[10px] font-mono text-ei-accent uppercase tracking-widest">Uploaded Documents</h2>
+          <button (click)="loadDocuments()" class="ei-btn-ghost text-xs">
+            <lucide-icon name="refresh-cw" [size]="12"></lucide-icon> Refresh
+          </button>
+        </div>
+        @if (documents().length > 0) {
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-ei-border">
+                <th class="text-left text-[10px] font-mono text-ei-muted uppercase tracking-wider pb-2">Filename</th>
+                <th class="text-left text-[10px] font-mono text-ei-muted uppercase tracking-wider pb-2">Chunks</th>
+                <th class="text-left text-[10px] font-mono text-ei-muted uppercase tracking-wider pb-2">Uploaded</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (doc of documents(); track doc.id) {
+                <tr class="border-b border-ei-border/50">
+                  <td class="py-2.5 text-ei-text font-mono text-xs">{{ doc.filename }}</td>
+                  <td class="py-2.5 font-mono text-xs text-ei-subtle">{{ doc.numChunks }}</td>
+                  <td class="py-2.5 font-mono text-xs text-ei-muted">{{ doc.uploadedAt | date:'short' }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        } @else {
+          <p class="text-sm text-ei-muted py-4">No documents uploaded yet.</p>
+        }
+      </div>
 
-      <!-- Search Test Card -->
-      <mat-card class="search-card">
-        <mat-card-header>
-          <mat-card-title>Test Similarity Search</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <mat-form-field class="search-field">
-            <mat-label>Enter search query</mat-label>
-            <input matInput [(ngModel)]="searchQuery" placeholder="e.g., groceries, hotel, food">
-          </mat-form-field>
-          <button mat-raised-button color="accent" (click)="testSearch()" [disabled]="!searchQuery">
+      <!-- Similarity Search -->
+      <div class="card">
+        <h2 class="text-[10px] font-mono text-ei-accent uppercase tracking-widest mb-4">Test Similarity Search</h2>
+        <div class="flex items-center gap-3 mb-4">
+          <div class="relative flex-1">
+            <lucide-icon name="search" [size]="14" class="absolute left-3 top-1/2 -translate-y-1/2 text-ei-muted"></lucide-icon>
+            <input type="text" [(ngModel)]="searchQuery" (keydown.enter)="testSearch()"
+                   class="ei-input pl-9 py-2" placeholder="e.g., groceries, hotel, food">
+          </div>
+          <button (click)="testSearch()" [disabled]="!searchQuery.trim()" class="ei-btn-primary py-2 px-4 text-xs">
             Search
           </button>
+        </div>
 
-          @if (searchResults().length > 0) {
-            <div class="search-results">
-              <h3>Found {{ searchResults().length }} results:</h3>
-              @for (result of searchResults(); track $index) {
-                <div class="search-result-item">
-                  <div class="result-score">Similarity: {{ result.similarity?.toFixed(4) || result.semanticScore?.toFixed(4) }}</div>
-                  <div class="result-text">{{ result.text }}</div>
-                  <div class="result-meta">File: {{ result.filename }}, Chunk: {{ result.chunkIndex }}</div>
+        @if (searchResults().length > 0) {
+          <p class="text-xs text-ei-muted mb-3 font-mono">{{ searchResults().length }} results</p>
+          <div class="space-y-2">
+            @for (result of searchResults(); track $index) {
+              <div class="bg-ei-bg rounded-lg p-3 border-l-2 border-ei-accent">
+                <div class="flex items-center gap-3 mb-1.5">
+                  <span class="badge-accent text-[10px]">
+                    Score: {{ (result.similarity || result.semanticScore)?.toFixed(4) }}
+                  </span>
+                  <span class="text-[10px] text-ei-muted font-mono">
+                    {{ result.filename }} · Chunk {{ result.chunkIndex }}
+                  </span>
                 </div>
-              }
-            </div>
-          }
-        </mat-card-content>
-      </mat-card>
-
-      <!-- Chunks Preview Card -->
-      <mat-card class="chunks-card">
-        <mat-card-header>
-          <mat-card-title>Document Chunks Preview (Last 10)</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          @if (chunks().length > 0) {
-            <p class="chunk-info">Showing {{ chunks().length }} of {{ totalChunks() }} total chunks</p>
-            @for (chunk of chunks(); track chunk.id) {
-              <div class="chunk-item">
-                <div class="chunk-header">
-                  <span class="chunk-id">ID: {{ chunk.id }}</span>
-                  <span class="chunk-index">Chunk {{ chunk.chunkIndex }}</span>
-                  <span class="chunk-embedding">Embedding: {{ chunk.embeddingSize }}d</span>
-                </div>
-                <div class="chunk-text">{{ chunk.text }}</div>
+                <p class="text-xs text-ei-subtle leading-relaxed line-clamp-3">{{ result.text }}</p>
               </div>
             }
-          } @else {
-            <p>No chunks found.</p>
-          }
-        </mat-card-content>
-        <mat-card-actions>
-          <button mat-raised-button color="primary" (click)="loadChunks()">Refresh Chunks</button>
-        </mat-card-actions>
-      </mat-card>
+          </div>
+        }
+      </div>
+
+      <!-- Chunks Preview -->
+      <div class="card">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h2 class="text-[10px] font-mono text-ei-accent uppercase tracking-widest">Document Chunks</h2>
+            @if (totalChunks() > 0) {
+              <p class="text-[10px] text-ei-muted font-mono mt-1">
+                Showing {{ chunks().length }} of {{ totalChunks() }}
+              </p>
+            }
+          </div>
+          <button (click)="loadChunks()" class="ei-btn-ghost text-xs">
+            <lucide-icon name="refresh-cw" [size]="12"></lucide-icon> Refresh
+          </button>
+        </div>
+        @if (chunks().length > 0) {
+          <div class="space-y-2">
+            @for (chunk of chunks(); track chunk.id) {
+              <div class="bg-ei-bg rounded-lg p-3 border border-ei-border/50">
+                <div class="flex items-center gap-3 mb-1.5">
+                  <span class="text-[10px] font-mono text-ei-muted">ID: {{ chunk.id.slice(0, 8) }}…</span>
+                  <span class="text-[10px] font-mono text-ei-muted">Chunk {{ chunk.chunkIndex }}</span>
+                  <span class="text-[10px] font-mono text-ei-muted">{{ chunk.embeddingSize }}d</span>
+                </div>
+                <p class="text-xs text-ei-subtle font-mono leading-relaxed line-clamp-2">{{ chunk.text }}</p>
+              </div>
+            }
+          </div>
+        } @else {
+          <p class="text-sm text-ei-muted py-4">No chunks found.</p>
+        }
+      </div>
     </div>
   `,
-  styles: [`
-    .debug-container {
-      padding: 20px;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-
-    h1 {
-      margin-bottom: 20px;
-    }
-
-    mat-card {
-      margin-bottom: 20px;
-    }
-
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 15px;
-      margin: 15px 0;
-    }
-
-    .stat-item {
-      padding: 10px;
-      background: #f5f5f5;
-      border-radius: 4px;
-    }
-
-    .stat-label {
-      display: block;
-      font-size: 12px;
-      color: #666;
-      margin-bottom: 5px;
-    }
-
-    .stat-value {
-      display: block;
-      font-size: 24px;
-      font-weight: bold;
-      color: #333;
-    }
-
-    .debug-table {
-      width: 100%;
-      margin-top: 10px;
-    }
-
-    .search-field {
-      width: 100%;
-      margin-right: 10px;
-    }
-
-    .search-results {
-      margin-top: 20px;
-    }
-
-    .search-result-item {
-      padding: 15px;
-      margin: 10px 0;
-      background: #f9f9f9;
-      border-left: 4px solid #3f51b5;
-      border-radius: 4px;
-    }
-
-    .result-score {
-      font-weight: bold;
-      color: #3f51b5;
-      margin-bottom: 5px;
-    }
-
-    .result-text {
-      margin: 10px 0;
-      line-height: 1.6;
-    }
-
-    .result-meta {
-      font-size: 12px;
-      color: #666;
-    }
-
-    .chunk-info {
-      font-style: italic;
-      color: #666;
-      margin-bottom: 15px;
-    }
-
-    .chunk-item {
-      padding: 12px;
-      margin: 10px 0;
-      background: #f9f9f9;
-      border-radius: 4px;
-      border: 1px solid #ddd;
-    }
-
-    .chunk-header {
-      display: flex;
-      gap: 15px;
-      margin-bottom: 8px;
-      font-size: 12px;
-      color: #666;
-    }
-
-    .chunk-text {
-      font-size: 14px;
-      line-height: 1.5;
-      color: #333;
-    }
-  `]
+  styles: []
 })
 export class DebugComponent implements OnInit {
   stats = signal<VectorStoreStats | null>(null);
@@ -281,8 +166,6 @@ export class DebugComponent implements OnInit {
   searchQuery = '';
   embeddingInfo = signal<any>(null);
 
-  documentColumns = ['filename', 'numChunks', 'uploadedAt'];
-
   constructor(private debugService: DebugService) {}
 
   ngOnInit() {
@@ -292,69 +175,58 @@ export class DebugComponent implements OnInit {
     this.loadEmbeddingInfo();
   }
 
+  statItems() {
+    const s = this.stats()!;
+    return [
+      { label: 'Total Documents', value: s.totalDocuments },
+      { label: 'Total Chunks', value: s.totalChunks },
+      { label: 'Total Expenses', value: s.totalExpenses },
+      { label: 'Embedding Dim', value: s.embeddingDimension },
+      { label: 'Node Version', value: s.systemInfo.nodeVersion },
+      { label: 'Uptime', value: this.formatUptime(s.systemInfo.uptime) },
+    ];
+  }
+
   loadStats() {
     this.debugService.getStats().subscribe({
-      next: (response) => {
-        this.stats.set(response.stats);
-      },
-      error: (error) => {
-        console.error('Failed to load stats:', error);
-      }
+      next: (r) => this.stats.set(r.stats),
+      error: (e) => console.error('Failed to load stats:', e)
     });
   }
 
   loadDocuments() {
     this.debugService.getDocuments().subscribe({
-      next: (response) => {
-        this.documents.set(response.documents);
-      },
-      error: (error) => {
-        console.error('Failed to load documents:', error);
-      }
+      next: (r) => this.documents.set(r.documents),
+      error: (e) => console.error('Failed to load documents:', e)
     });
   }
 
   loadChunks() {
     this.debugService.getChunks(10).subscribe({
-      next: (response) => {
-        this.chunks.set(response.chunks);
-        this.totalChunks.set(response.total);
-      },
-      error: (error) => {
-        console.error('Failed to load chunks:', error);
-      }
+      next: (r) => { this.chunks.set(r.chunks); this.totalChunks.set(r.total); },
+      error: (e) => console.error('Failed to load chunks:', e)
     });
   }
 
   loadEmbeddingInfo() {
     this.debugService.getEmbeddingInfo().subscribe({
-      next: (response) => {
-        this.embeddingInfo.set(response);
-        console.log('Embedding info:', response);
-      },
-      error: (error) => {
-        console.error('Failed to load embedding info:', error);
-      }
+      next: (r) => this.embeddingInfo.set(r),
+      error: (e) => console.error('Failed to load embedding info:', e)
     });
   }
 
   testSearch() {
     if (!this.searchQuery.trim()) return;
-
     this.debugService.searchChunks(this.searchQuery, 10).subscribe({
-      next: (response) => {
-        this.searchResults.set(response.results);
-      },
-      error: (error) => {
-        console.error('Search failed:', error);
-      }
+      next: (r) => this.searchResults.set(r.results),
+      error: (e) => console.error('Search failed:', e)
     });
   }
 
   formatUptime(seconds?: number): string {
     if (!seconds) return 'N/A';
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-    return `${hours}h ${minutes}m`;
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    return `${h}h ${m}m`;
   }
 }

@@ -43,7 +43,7 @@ import { createReconciliationPlan, summarizePlan } from '../reconcile/reconcilia
 import { executeSyncPlan, validateSyncPrerequisites, generateSyncReport } from '../reconcile/syncHandler.js';
 import { generateSyncedExpenseReport, summarizeReport } from '../reports/reportGenerator.js';
 
-const backendUrl = process.env.BACKEND_URL || 'http://localhost:3000';
+const backendUrl = process.env.BACKEND_URL || 'http://localhost:3003';
 
 /**
  * Generates natural language explanation of reconciliation results using LangChain

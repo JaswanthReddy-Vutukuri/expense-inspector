@@ -41,7 +41,7 @@ export class DeleteExpenseTool extends StructuredTool {
     super();
     this.authToken = authToken;
     this.context = context;
-    this.backendUrl = process.env.BACKEND_BASE_URL || 'http://localhost:3000';
+    this.backendUrl = process.env.BACKEND_BASE_URL || 'http://localhost:3003';
   }
   
   async _call(args) {

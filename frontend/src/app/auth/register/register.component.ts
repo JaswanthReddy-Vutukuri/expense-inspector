@@ -1,70 +1,74 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
+import { LucideAngularModule, Receipt } from 'lucide-angular';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [
-    CommonModule, 
-    ReactiveFormsModule, 
-    RouterLink,
-    MatCardModule, 
-    MatFormFieldModule, 
-    MatInputModule, 
-    MatButtonModule
-  ],
+  imports: [ReactiveFormsModule, RouterLink, LucideAngularModule],
   template: `
-    <div class="auth-container">
-      <mat-card class="auth-card">
-        <mat-card-header>
-          <mat-card-title>Register</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-            <mat-form-field appearance="outline" class="full-width">
-              <mat-label>Full Name</mat-label>
-              <input matInput formControlName="fullName">
-              <mat-error *ngIf="registerForm.get('fullName')?.hasError('required')">Name is required</mat-error>
-            </mat-form-field>
+    <div class="min-h-screen flex items-center justify-center bg-ei-bg px-4">
+      <div class="w-full max-w-md animate-fade-in">
+        <!-- Brand -->
+        <div class="text-center mb-8">
+          <div class="inline-flex items-center gap-2.5 mb-3">
+            <div class="w-10 h-10 rounded-xl bg-ei-accent/10 flex items-center justify-center">
+              <lucide-icon name="receipt" [size]="22" class="text-ei-accent"></lucide-icon>
+            </div>
+          </div>
+          <h1 class="text-2xl font-bold text-ei-text">Expense Inspector</h1>
+          <p class="section-label mt-2">Create your account</p>
+        </div>
 
-            <mat-form-field appearance="outline" class="full-width">
-              <mat-label>Email</mat-label>
-              <input matInput type="email" formControlName="email">
-              <mat-error *ngIf="registerForm.get('email')?.hasError('required')">Email is required</mat-error>
-              <mat-error *ngIf="registerForm.get('email')?.hasError('email')">Valid email required</mat-error>
-            </mat-form-field>
+        <!-- Card -->
+        <div class="card">
+          <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="space-y-4">
+            <div>
+              <label class="text-xs font-mono text-ei-subtle mb-1.5 block">Full Name</label>
+              <input type="text" formControlName="fullName" class="ei-input" placeholder="John Doe" autocomplete="name">
+              @if (registerForm.get('fullName')?.touched && registerForm.get('fullName')?.hasError('required')) {
+                <p class="text-xs text-ei-rose mt-1">Name is required</p>
+              }
+            </div>
 
-            <mat-form-field appearance="outline" class="full-width">
-              <mat-label>Password</mat-label>
-              <input matInput type="password" formControlName="password">
-              <mat-error *ngIf="registerForm.get('password')?.hasError('required')">Password is required</mat-error>
-              <mat-error *ngIf="registerForm.get('password')?.hasError('minlength')">Min 6 characters</mat-error>
-            </mat-form-field>
+            <div>
+              <label class="text-xs font-mono text-ei-subtle mb-1.5 block">Email</label>
+              <input type="email" formControlName="email" class="ei-input" placeholder="you&#64;example.com" autocomplete="email">
+              @if (registerForm.get('email')?.touched && registerForm.get('email')?.hasError('required')) {
+                <p class="text-xs text-ei-rose mt-1">Email is required</p>
+              }
+              @if (registerForm.get('email')?.touched && registerForm.get('email')?.hasError('email')) {
+                <p class="text-xs text-ei-rose mt-1">Please enter a valid email</p>
+              }
+            </div>
 
-            <button mat-raised-button color="primary" class="full-width" type="submit" [disabled]="registerForm.invalid || loading">
-              {{ loading ? 'Creating Account...' : 'Register' }}
+            <div>
+              <label class="text-xs font-mono text-ei-subtle mb-1.5 block">Password</label>
+              <input type="password" formControlName="password" class="ei-input" placeholder="Min 6 characters" autocomplete="new-password">
+              @if (registerForm.get('password')?.touched && registerForm.get('password')?.hasError('required')) {
+                <p class="text-xs text-ei-rose mt-1">Password is required</p>
+              }
+              @if (registerForm.get('password')?.touched && registerForm.get('password')?.hasError('minlength')) {
+                <p class="text-xs text-ei-rose mt-1">Minimum 6 characters</p>
+              }
+            </div>
+
+            <button type="submit" [disabled]="registerForm.invalid || loading" class="ei-btn-primary w-full">
+              {{ loading ? 'Creating Account...' : 'Create Account' }}
             </button>
           </form>
-          <div class="auth-footer">
-            Already have an account? <a routerLink="/auth/login">Login</a>
-          </div>
-        </mat-card-content>
-      </mat-card>
+
+          <p class="text-center text-sm text-ei-muted mt-6">
+            Already have an account?
+            <a routerLink="/auth/login" class="text-ei-accent hover:text-ei-accent-d font-medium transition-colors">Sign In</a>
+          </p>
+        </div>
+      </div>
     </div>
   `,
-  styles: [`
-    .auth-container { display: flex; justify-content: center; align-items: center; height: 100vh; background: #f5f5f5; }
-    .auth-card { width: 100%; max-width: 400px; padding: 16px; }
-    .full-width { width: 100%; margin-bottom: 16px; }
-    .auth-footer { margin-top: 16px; text-align: center; }
-  `]
+  styles: []
 })
 export class RegisterComponent {
   registerForm: FormGroup;
@@ -82,15 +86,7 @@ export class RegisterComponent {
     if (this.registerForm.valid) {
       this.loading = true;
       const formValue = this.registerForm.value;
-      
-      // Transform to API format
-      const apiPayload = {
-        email: formValue.email,
-        password: formValue.password,
-        name: formValue.fullName
-      };
-      
-      this.authService.register(apiPayload).subscribe({
+      this.authService.register({ email: formValue.email, password: formValue.password, name: formValue.fullName }).subscribe({
         next: () => this.router.navigate(['/dashboard']),
         error: () => this.loading = false
       });

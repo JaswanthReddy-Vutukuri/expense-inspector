@@ -1,106 +1,103 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { MatButtonModule } from '@angular/material/button';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
+import { LucideAngularModule } from 'lucide-angular';
 import { ExpenseService } from '../../services/expense.service';
+import { ToastService } from '../../shared/toast/toast.service';
 
 @Component({
   selector: 'app-expense-form',
   standalone: true,
-  imports: [
-    CommonModule, ReactiveFormsModule, RouterLink,
-    MatCardModule, MatFormFieldModule, MatInputModule, 
-    MatSelectModule, MatButtonModule, MatDatepickerModule, MatNativeDateModule
-  ],
+  imports: [ReactiveFormsModule, RouterLink, LucideAngularModule],
   template: `
-    <div class="form-container">
-      <mat-card>
-        <mat-card-header>
-          <mat-card-title>{{ isEdit ? 'Edit' : 'New' }} Expense</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <form [formGroup]="expenseForm" (ngSubmit)="onSubmit()">
-            <div class="form-grid">
-              <mat-form-field appearance="outline">
-                <mat-label>Title</mat-label>
-                <input matInput formControlName="title">
-              </mat-form-field>
+    <div class="max-w-2xl mx-auto animate-fade-in">
+      <div class="mb-6">
+        <p class="section-label">{{ isEdit ? 'Edit' : 'Create' }}</p>
+        <h1 class="text-2xl font-bold text-ei-text">{{ isEdit ? 'Edit' : 'New' }} Expense</h1>
+      </div>
 
-              <mat-form-field appearance="outline">
-                <mat-label>Amount</mat-label>
-                <input matInput type="number" formControlName="amount">
-              </mat-form-field>
-
-              <mat-form-field appearance="outline">
-                <mat-label>Category</mat-label>
-                <mat-select formControlName="category">
-                  <mat-option *ngFor="let cat of categories" [value]="cat.id">{{cat.name}}</mat-option>
-                </mat-select>
-              </mat-form-field>
-
-              <mat-form-field appearance="outline">
-                <mat-label>Date</mat-label>
-                <input matInput [matDatepicker]="picker" formControlName="date">
-                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-                <mat-datepicker #picker></mat-datepicker>
-              </mat-form-field>
+      <div class="card">
+        <form [formGroup]="expenseForm" (ngSubmit)="onSubmit()" class="space-y-5">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="text-xs font-mono text-ei-subtle mb-1.5 block">Title</label>
+              <input type="text" formControlName="title" class="ei-input" placeholder="Expense title">
+              @if (expenseForm.get('title')?.touched && expenseForm.get('title')?.hasError('required')) {
+                <p class="text-xs text-ei-rose mt-1">Title is required</p>
+              }
             </div>
 
-            <mat-form-field appearance="outline" class="full-width">
-              <mat-label>Description (Optional)</mat-label>
-              <textarea matInput formControlName="description" rows="3"></textarea>
-            </mat-form-field>
-
-            <div class="form-actions">
-              <button mat-button type="button" routerLink="/expenses">Cancel</button>
-              <button mat-raised-button color="primary" type="submit" [disabled]="expenseForm.invalid || loading">
-                {{ loading ? 'Saving...' : 'Save Expense' }}
-              </button>
+            <div>
+              <label class="text-xs font-mono text-ei-subtle mb-1.5 block">Amount</label>
+              <input type="number" formControlName="amount" class="ei-input" placeholder="0.00" step="0.01">
+              @if (expenseForm.get('amount')?.touched && expenseForm.get('amount')?.hasError('required')) {
+                <p class="text-xs text-ei-rose mt-1">Amount is required</p>
+              }
             </div>
-          </form>
-        </mat-card-content>
-      </mat-card>
+
+            <div>
+              <label class="text-xs font-mono text-ei-subtle mb-1.5 block">Category</label>
+              <select formControlName="category" class="ei-select">
+                <option value="" disabled>Select category</option>
+                @for (cat of categories; track cat.id) {
+                  <option [value]="cat.id">{{ cat.name }}</option>
+                }
+              </select>
+              @if (expenseForm.get('category')?.touched && expenseForm.get('category')?.hasError('required')) {
+                <p class="text-xs text-ei-rose mt-1">Category is required</p>
+              }
+            </div>
+
+            <div>
+              <label class="text-xs font-mono text-ei-subtle mb-1.5 block">Date</label>
+              <input type="date" formControlName="date" class="ei-input">
+              @if (expenseForm.get('date')?.touched && expenseForm.get('date')?.hasError('required')) {
+                <p class="text-xs text-ei-rose mt-1">Date is required</p>
+              }
+            </div>
+          </div>
+
+          <div>
+            <label class="text-xs font-mono text-ei-subtle mb-1.5 block">Description (Optional)</label>
+            <textarea formControlName="description" rows="3" class="ei-input" placeholder="Add notes..."></textarea>
+          </div>
+
+          <div class="flex justify-end gap-3 pt-2">
+            <a routerLink="/expenses" class="ei-btn-secondary">Cancel</a>
+            <button type="submit" [disabled]="expenseForm.invalid || loading" class="ei-btn-primary">
+              {{ loading ? 'Saving...' : 'Save Expense' }}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   `,
-  styles: [`
-    .form-container { max-width: 800px; margin: 0 auto; }
-    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
-    .full-width { width: 100%; }
-    .form-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px; }
-    @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
-  `]
+  styles: []
 })
 export class ExpenseFormComponent implements OnInit {
   expenseForm: FormGroup;
   isEdit = false;
   id?: number;
   loading = false;
-  categories: {id: number, name: string}[] = [];
+  categories: { id: number; name: string }[] = [];
 
   constructor(
     private fb: FormBuilder,
     private expenseService: ExpenseService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private toastService: ToastService
   ) {
     this.expenseForm = this.fb.group({
       title: ['', Validators.required],
       amount: [null, [Validators.required, Validators.min(0.01)]],
       category: ['', Validators.required],
-      date: [new Date(), Validators.required],
+      date: [this.formatDate(new Date()), Validators.required],
       description: ['']
     });
   }
 
   ngOnInit() {
-    // Load categories
     this.expenseService.getCategories().subscribe(categories => {
       this.categories = categories;
     });
@@ -114,7 +111,7 @@ export class ExpenseFormComponent implements OnInit {
           title: expense.description,
           amount: expense.amount,
           category: expense.category_id,
-          date: new Date(expense.date),
+          date: expense.date.split('T')[0],
           description: expense.description
         });
       });
@@ -124,32 +121,33 @@ export class ExpenseFormComponent implements OnInit {
   onSubmit() {
     if (this.expenseForm.valid) {
       this.loading = true;
-      const formValue = this.expenseForm.value;
-      
-      // Transform to API format
+      const fv = this.expenseForm.value;
+
       const apiPayload = {
-        amount: formValue.amount,
-        category_id: formValue.category,
-        description: formValue.title + (formValue.description ? ': ' + formValue.description : ''),
-        date: this.formatDate(formValue.date)
+        amount: fv.amount,
+        category_id: fv.category,
+        description: fv.title + (fv.description ? ': ' + fv.description : ''),
+        date: fv.date
       };
-      
+
       const obs = this.isEdit && this.id
         ? this.expenseService.updateExpense(this.id, apiPayload as any)
         : this.expenseService.createExpense(apiPayload as any);
 
       obs.subscribe({
-        next: () => this.router.navigate(['/expenses']),
+        next: () => {
+          this.toastService.success(this.isEdit ? 'Expense updated' : 'Expense created');
+          this.router.navigate(['/expenses']);
+        },
         error: () => this.loading = false
       });
     }
   }
-  
+
   private formatDate(date: Date): string {
-    const d = new Date(date);
-    const year = d.getFullYear();
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
   }
 }
