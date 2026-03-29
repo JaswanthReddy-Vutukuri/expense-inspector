@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface VectorStoreStats {
   totalDocuments: number;
@@ -43,7 +44,7 @@ export interface SearchResult {
   providedIn: 'root'
 })
 export class DebugService {
-  private aiUrl = 'http://localhost:3001/ai';
+  private aiUrl = environment.aiUrl;
 
   constructor(private http: HttpClient) {}
 

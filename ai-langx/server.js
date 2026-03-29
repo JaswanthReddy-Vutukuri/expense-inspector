@@ -15,11 +15,11 @@
  * COMPARE WITH: ai/server.js
  */
 
-import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
+import { config } from './src/config/env.js';
 import { initializeLangSmith } from './src/config/langsmith.config.js';
 import chatRoutes from './src/routes/chat.js';
 import uploadRoutes from './src/routes/upload.js';
@@ -28,8 +28,8 @@ import { authMiddleware } from './src/middleware/auth.js';
 // import debugRoutes from './src/routes/debug.js';
 
 const app = express();
-const PORT = process.env.PORT || 3002;
-const IS_PRODUCTION = process.env.NODE_ENV === 'production';
+const PORT = config.port;
+const IS_PRODUCTION = config.isProduction;
 const ENABLE_DEBUG = process.env.ENABLE_DEBUG_ROUTES === 'true';
 
 // Initialize LangSmith tracing
@@ -39,9 +39,9 @@ initializeLangSmith();
 app.use(helmet());
 
 // CORS configuration
-const allowedOrigins = process.env.ALLOWED_ORIGINS 
-  ? process.env.ALLOWED_ORIGINS.split(',').map(origin => origin.trim())
-  : ['http://localhost:4200'];
+const allowedOrigins = config.allowedOrigins.length > 0
+  ? config.allowedOrigins
+  : (IS_PRODUCTION ? [] : ['http://localhost:4200']);
 
 app.use(cors({
   origin: (origin, callback) => {
@@ -117,11 +117,11 @@ app.listen(PORT, () => {
   console.log('═══════════════════════════════════════════════════════');
   console.log('  🚀 AI-LANGX ORCHESTRATOR (LangChain Implementation)  ');
   console.log('═══════════════════════════════════════════════════════');
-  console.log(`  📍 Server:    http://localhost:${PORT}`);
-  console.log(`  🔗 Backend:   ${process.env.BACKEND_BASE_URL || 'http://localhost:3003'}`);
-  console.log(`  🧠 LLM:       ${process.env.LLM_MODEL || 'gpt-4o-mini'}`);
-  console.log(`  📊 LangSmith: ${process.env.LANGCHAIN_TRACING_V2 === 'true' ? '✅ ENABLED' : '❌ DISABLED'}`);
-  console.log(`  🏠 Project:   ${process.env.LANGCHAIN_PROJECT || 'expense-tracker-ai-langx'}`);
+  console.log(`  📍 Server:    port ${PORT}`);
+  console.log(`  🔗 Backend:   ${config.backendBaseUrl}`);
+  console.log(`  🧠 LLM:       ${config.llmModel}`);
+  console.log(`  📊 LangSmith: ${config.langchainTracingV2 === 'true' ? '✅ ENABLED' : '❌ DISABLED'}`);
+  console.log(`  🏠 Project:   ${config.langchainProject}`);
   console.log('═══════════════════════════════════════════════════════');
   console.log('');
   console.log('  📚 Compare with custom implementation at port 3001');

@@ -206,9 +206,9 @@ router.get('/chat/info', (req, res) => {
       }
     ],
     comparison: {
-      custom_implementation: 'http://localhost:3001/ai/chat',
-      langchain_implementation: 'http://localhost:3002/ai/chat',
-      note: 'Both implementations have identical API contracts'
+      custom_implementation: '/ai/chat (vanilla service, default port 3001)',
+      langchain_implementation: '/ai/chat (langchain service, default port 3002)',
+      note: 'Both implementations have identical API contracts. Ports configured via PORT env var.'
     }
   });
 });

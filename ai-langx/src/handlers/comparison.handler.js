@@ -29,6 +29,7 @@ import { PromptTemplate } from "@langchain/core/prompts";
 import { extractExpensesFromPDF } from '../rag/extractors/expense.extractor.js';
 import { compareExpenses } from '../comparison/expenseComparator.js';
 import axios from 'axios';
+import { config } from '../config/env.js';
 
 /**
  * Generate natural language explanation from comparison result
@@ -195,7 +196,7 @@ export const handleComparison = async (userMessage, userId, authToken, options =
     
     // Step 2: Fetch app expenses from backend
     console.log('[Compare Handler] Fetching app expenses from backend...');
-    const backendUrl = process.env.BACKEND_URL || 'http://localhost:3003';
+    const backendUrl = config.backendBaseUrl;
     
     const response = await axios.get(`${backendUrl}/api/expenses`, {
       params: { limit: 1000 },

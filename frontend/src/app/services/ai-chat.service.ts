@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface ChatMessage {
   role: 'user' | 'assistant';
@@ -10,7 +11,7 @@ export interface ChatMessage {
 
 export interface ChatRequest {
   message: string;
-  history?: ChatMessage[];  // Optional conversation history for context
+  history?: ChatMessage[];
 }
 
 export interface ChatResponse {
@@ -33,7 +34,7 @@ export interface UploadResponse {
   providedIn: 'root'
 })
 export class AiChatService {
-  private aiUrl = 'http://localhost:3001/ai';
+  private aiUrl = environment.aiUrl;
 
   constructor(private http: HttpClient) {}
 

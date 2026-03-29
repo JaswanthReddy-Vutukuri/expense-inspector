@@ -36,6 +36,7 @@
  */
 
 import axios from 'axios';
+import { config } from '../config/env.js';
 import { ChatOpenAI } from '@langchain/openai';
 import { PromptTemplate } from '@langchain/core/prompts';
 import { handleComparison } from './comparison.handler.js';
@@ -43,7 +44,7 @@ import { createReconciliationPlan, summarizePlan } from '../reconcile/reconcilia
 import { executeSyncPlan, validateSyncPrerequisites, generateSyncReport } from '../reconcile/syncHandler.js';
 import { generateSyncedExpenseReport, summarizeReport } from '../reports/reportGenerator.js';
 
-const backendUrl = process.env.BACKEND_URL || 'http://localhost:3003';
+const backendUrl = config.backendBaseUrl;
 
 /**
  * Generates natural language explanation of reconciliation results using LangChain

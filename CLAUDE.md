@@ -9,18 +9,18 @@ Expense Inspector is a full-stack expense tracking application with an AI-powere
 ## Architecture
 
 ```
-Angular Frontend (4200) → Express Backend (3003) ← AI layer (swappable)
-                                                    ├─ ai/       (3001) — vanilla
-                                                    └─ ai-langx/ (3002) — LangChain
+Angular Frontend → Express Backend ← AI layer (swappable)
+                                      ├─ ai/       — vanilla
+                                      └─ ai-langx/ — LangChain
 ```
 
 **Strict separation of concerns — never mix responsibilities across folders:**
-- `frontend/` — Angular 17 SPA (standalone components, Angular Material, Chart.js)
+- `frontend/` — Angular 17 SPA (standalone components, Tailwind CSS, Lucide icons, Chart.js)
 - `backend/` — Express + SQLite API. Source of truth for all data. No AI logic here.
 - `ai/` — Vanilla AI orchestrator: raw OpenAI API, custom tool-calling loop, custom RAG pipeline
 - `ai-langx/` — Same use case rebuilt with LangChain/LangGraph/LangSmith frameworks
 
-**The AI layer is swappable.** Both implement identical features (same 5 tools, same intent routing, same RAG). Switch by changing the AI URL in `frontend/src/app/services/ai-chat.service.ts` (port 3001 vs 3002). The backend is unaware of which AI service is calling it.
+**The AI layer is swappable.** Both implement identical features (same 5 tools, same intent routing, same RAG). Switch by changing `aiUrl` in `frontend/src/environments/environment.ts`. The backend is unaware of which AI service is calling it.
 
 AI services do NOT access the database directly — they call backend HTTP APIs with the user's JWT token. The LLM acts as an orchestrator that decides which tools to call.
 
@@ -28,21 +28,21 @@ AI services do NOT access the database directly — they call backend HTTP APIs 
 
 ### Frontend (`frontend/`)
 ```bash
-npm start          # Dev server on port 4200
-npm run build      # Production build
+npm start          # Dev server (default port 4200)
+npm run build      # Production build (uses environment.prod.ts)
 npm test           # Karma + Jasmine tests
 ```
 
 ### Backend (`backend/`)
 ```bash
-npm run dev        # Nodemon dev server on port 3003
+npm run dev        # Nodemon dev server
 npm start          # Production server
 npm run seed       # Seed demo data into SQLite
 ```
 
 ### AI Vanilla (`ai/`)
 ```bash
-npm run dev        # Nodemon dev server on port 3001
+npm run dev        # Nodemon dev server
 npm start          # Production server
 npm test           # Jest tests
 npm run test:watch # Jest watch mode
@@ -50,7 +50,7 @@ npm run test:watch # Jest watch mode
 
 ### AI LangChain (`ai-langx/`)
 ```bash
-npm run dev        # Nodemon dev server on port 3002
+npm run dev        # Nodemon dev server
 npm start          # Production server
 npm test           # Jest tests
 ```
@@ -74,15 +74,31 @@ Each service has its own `node_modules` — run `npm install` inside each folder
 
 ## Authentication Flow
 
-JWT-based. Backend issues tokens on login/register. Frontend stores in localStorage, attaches via JwtInterceptor. AI services forward the user's JWT when calling backend APIs. All data is user-scoped.
+JWT-based. Backend issues tokens on login/register. Frontend stores in localStorage, attaches via JwtInterceptor. AI services forward the user's JWT when calling backend APIs. All data is user-scoped. `JWT_SECRET` must match across backend and whichever AI service is active.
 
-## Environment Variables
+## Environment Configuration
 
-- Backend: `PORT`, `JWT_SECRET`, `NODE_ENV` (see `.env.example`)
-- AI Custom: `LLM_API_KEY`, `BACKEND_BASE_URL`, `PORT`, `ALLOWED_ORIGINS`
-- AI LangChain: `OPENAI_API_KEY`, `LANGCHAIN_API_KEY`, `BACKEND_BASE_URL`, `LANGCHAIN_TRACING_V2`
-- To switch AI layer: change the URL in `frontend/src/app/services/ai-chat.service.ts` (3001 for vanilla, 3002 for LangChain)
+All service URLs are configured via environment variables — no hardcoded URLs in source code.
+
+**Frontend** (`src/environments/environment.ts`):
+- `apiUrl` — backend API base URL
+- `aiUrl` — AI service base URL
+- To switch AI layer: change `aiUrl` port (default 3001 for vanilla, 3002 for LangChain)
+- Production build auto-swaps to `environment.prod.ts` (relative URLs for reverse proxy)
+
+**Backend** (`.env`, see `.env.example`):
+- `PORT`, `NODE_ENV`, `JWT_SECRET`, `ALLOWED_ORIGINS`
+
+**AI Vanilla** (`.env`, see `.env.example`):
+- `PORT`, `NODE_ENV`, `OPENAI_API_KEY`, `BACKEND_BASE_URL`, `JWT_SECRET`, `ALLOWED_ORIGINS`
+- Centralized config: `src/config/env.js` — validates required vars at startup, fails fast if missing
+
+**AI LangChain** (`.env`, see `.env.example`):
+- Same as vanilla plus `LANGCHAIN_API_KEY`, `LANGCHAIN_TRACING_V2`, `LANGCHAIN_PROJECT`
+- Centralized config: `src/config/env.js` — same pattern as vanilla
+
+**Convention**: all services use `BACKEND_BASE_URL` (not `BACKEND_URL`). All CORS uses `ALLOWED_ORIGINS`.
 
 ## API Documentation
 
-Backend Swagger docs available at `http://localhost:3003/api-docs` when the server is running.
+Backend Swagger docs available at `/api-docs` endpoint when the server is running.

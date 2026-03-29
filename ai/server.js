@@ -1,25 +1,25 @@
-import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
+import { config } from './src/config/env.js';
 import chatRoutes from './src/routes/chat.js';
 import uploadRoutes from './src/routes/upload.js';
 import debugRoutes from './src/routes/debug.js';
 import { errorHandler } from './src/middleware/errorHandler.js';
 
 const app = express();
-const PORT = process.env.PORT || 3001;
-const IS_PRODUCTION = process.env.NODE_ENV === 'production';
+const PORT = config.port;
+const IS_PRODUCTION = config.isProduction;
 const ENABLE_DEBUG = process.env.ENABLE_DEBUG_ROUTES === 'true';
 
 // Add helmet for security headers
 app.use(helmet());
 
 // Restrict origins to environment-configured values only
-const allowedOrigins = process.env.ALLOWED_ORIGINS 
-  ? process.env.ALLOWED_ORIGINS.split(',').map(origin => origin.trim())
-  : ['http://localhost:4200']; // Default for development
+const allowedOrigins = config.allowedOrigins.length > 0
+  ? config.allowedOrigins
+  : (IS_PRODUCTION ? [] : ['http://localhost:4200']);
 
 app.use(cors({
   origin: (origin, callback) => {
@@ -82,6 +82,6 @@ app.use((req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`🚀 AI Orchestrator running on http://localhost:${PORT}`);
-  console.log(`🔗 Backend URL: ${process.env.BACKEND_BASE_URL || 'http://localhost:3003'}`);
+  console.log(`🚀 AI Orchestrator running on port ${PORT}`);
+  console.log(`🔗 Backend URL: ${config.backendBaseUrl}`);
 });

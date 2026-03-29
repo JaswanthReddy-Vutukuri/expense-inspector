@@ -38,6 +38,7 @@ import { fileURLToPath } from 'url';
 import { ChatOpenAI } from '@langchain/openai';
 import { PromptTemplate } from '@langchain/core/prompts';
 import { ListExpensesTool } from '../tools/listExpenses.tool.js';
+import { config } from '../config/env.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -385,7 +386,7 @@ export const generateSyncedExpenseReport = async (authToken, userId, addToPdfExp
     // We need to fetch directly from backend for structured data
     const axios = (await import('axios')).default;
     const response = await axios.get(
-      `${process.env.BACKEND_BASE_URL || 'http://localhost:3003'}/api/expenses`,
+      `${config.backendBaseUrl}/api/expenses`,
       {
         headers: { 'Authorization': `Bearer ${authToken}` },
         params: { limit: 1000 }

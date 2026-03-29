@@ -17,8 +17,22 @@ initDb().then(() => {
     console.error('Database failed to initialize:', err);
 });
 
-// Middleware
-app.use(cors());
+// CORS
+const IS_PRODUCTION = process.env.NODE_ENV === 'production';
+const allowedOrigins = process.env.ALLOWED_ORIGINS
+  ? process.env.ALLOWED_ORIGINS.split(',').map(o => o.trim())
+  : (IS_PRODUCTION ? [] : ['http://localhost:4200']);
+
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true
+}));
 app.use(morgan('dev'));
 app.use(express.json());
 

@@ -16,6 +16,7 @@
 import { StructuredTool } from "@langchain/core/tools";
 import { z } from "zod";
 import axios from 'axios';
+import { config } from '../config/env.js';
 
 const DeleteExpenseSchema = z.object({
   expense_id: z
@@ -41,7 +42,7 @@ export class DeleteExpenseTool extends StructuredTool {
     super();
     this.authToken = authToken;
     this.context = context;
-    this.backendUrl = process.env.BACKEND_BASE_URL || 'http://localhost:3003';
+    this.backendUrl = config.backendBaseUrl;
   }
   
   async _call(args) {

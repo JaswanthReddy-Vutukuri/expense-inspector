@@ -169,7 +169,7 @@ LANGCHAIN_API_KEY=ls_...
 LANGCHAIN_PROJECT=expense-tracker-learning
 
 # Backend API
-BACKEND_URL=http://localhost:3003
+BACKEND_BASE_URL=http://localhost:3003
 
 # Server
 PORT=3002

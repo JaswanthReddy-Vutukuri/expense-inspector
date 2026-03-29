@@ -2217,7 +2217,7 @@ LANGCHAIN_API_KEY=ls_...
 LANGCHAIN_PROJECT=expense-tracker-demo
 
 # Backend
-BACKEND_URL=http://localhost:3003
+BACKEND_BASE_URL=http://localhost:3003
 ```
 
 ### 9.2 Demo Flow
@@ -2433,7 +2433,7 @@ LANGCHAIN_PROJECT=expense-tracker-ai-langx
 LANGCHAIN_ENDPOINT=https://api.smith.langchain.com
 
 # Backend
-BACKEND_URL=http://localhost:3003
+BACKEND_BASE_URL=http://localhost:3003
 
 # Server
 PORT=3002

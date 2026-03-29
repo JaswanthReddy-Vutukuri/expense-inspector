@@ -166,19 +166,19 @@ npm run dev
 npm start
 ```
 
-Server runs on `http://localhost:3002` (different from ai/ on 3001)
+Server runs on the port configured in `.env` (default 3002, different from ai/ default 3001).
 
 ### 4. Test Endpoints
 
 ```bash
 # Chat (requires JWT)
-curl -X POST http://localhost:3002/ai/chat \
+curl -X POST http://<host>:<port>/ai/chat \
   -H "Authorization: Bearer YOUR_JWT" \
   -H "Content-Type: application/json" \
   -d '{"message": "Add 500 for lunch today"}'
 
 # Upload PDF (requires JWT)
-curl -X POST http://localhost:3002/ai/upload \
+curl -X POST http://<host>:<port>/ai/upload \
   -H "Authorization: Bearer YOUR_JWT" \
   -F "file=@statement.pdf"
 ```

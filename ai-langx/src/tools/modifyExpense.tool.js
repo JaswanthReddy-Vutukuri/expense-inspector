@@ -12,6 +12,7 @@
 import { StructuredTool } from "@langchain/core/tools";
 import { z } from "zod";
 import axios from 'axios';
+import { config } from '../config/env.js';
 import { validateAmount, normalizeCategory, validateDescription } from '../validators/expenseValidator.js';
 import { findCategoryByName } from '../utils/categoryCache.js';
 import { normalizeDateToISO } from '../utils/dateNormalizer.js';
@@ -56,7 +57,7 @@ export class ModifyExpenseTool extends StructuredTool {
     super();
     this.authToken = authToken;
     this.context = context;
-    this.backendUrl = process.env.BACKEND_BASE_URL || 'http://localhost:3003';
+    this.backendUrl = config.backendBaseUrl;
   }
   
   async _call(args) {
