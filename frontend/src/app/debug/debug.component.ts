@@ -1,7 +1,7 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { LucideAngularModule, RefreshCw, Search, Database, FileText, Cpu, AlertTriangle } from 'lucide-angular';
+import { LucideAngularModule } from 'lucide-angular';
 import { DebugService, VectorStoreStats, ChunkInfo, DocumentInfo } from '../services/debug.service';
 
 @Component({
@@ -94,7 +94,7 @@ import { DebugService, VectorStoreStats, ChunkInfo, DocumentInfo } from '../serv
           <div class="relative flex-1">
             <lucide-icon name="search" [size]="14" class="absolute left-3 top-1/2 -translate-y-1/2 text-ei-muted"></lucide-icon>
             <input type="text" [(ngModel)]="searchQuery" (keydown.enter)="testSearch()"
-                   class="ei-input pl-9 py-2" placeholder="e.g., groceries, hotel, food">
+                   class="ei-input pl-10 py-2" placeholder="e.g., groceries, hotel, food">
           </div>
           <button (click)="testSearch()" [disabled]="!searchQuery.trim()" class="ei-btn-primary py-2 px-4 text-xs">
             Search
@@ -141,7 +141,7 @@ import { DebugService, VectorStoreStats, ChunkInfo, DocumentInfo } from '../serv
             @for (chunk of chunks(); track chunk.id) {
               <div class="bg-ei-bg rounded-lg p-3 border border-ei-border/50">
                 <div class="flex items-center gap-3 mb-1.5">
-                  <span class="text-[10px] font-mono text-ei-muted">ID: {{ chunk.id.slice(0, 8) }}…</span>
+                  <span class="text-[10px] font-mono text-ei-muted">ID: {{ ('' + chunk.id).slice(0, 8) }}…</span>
                   <span class="text-[10px] font-mono text-ei-muted">Chunk {{ chunk.chunkIndex }}</span>
                   <span class="text-[10px] font-mono text-ei-muted">{{ chunk.embeddingSize }}d</span>
                 </div>

@@ -56,23 +56,6 @@ import { toSignal } from '@angular/core/rxjs-interop';
           <p class="text-[9px] font-mono uppercase tracking-widest text-ei-muted px-2 mb-2"
              [class.hidden]="sidebarCollapsed()">Tools</p>
 
-          <!-- AI Assistant toggle -->
-          <button (click)="chatOpen.set(!chatOpen())"
-                  class="w-full group flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all duration-200
-                         border-l-[3px] border-transparent"
-                  [class.justify-center]="sidebarCollapsed()"
-                  [class.px-0]="sidebarCollapsed()"
-                  [class]="chatOpen()
-                    ? 'bg-ei-accent/10 text-ei-accent border-l-[3px] !border-ei-accent'
-                    : 'text-ei-subtle hover:bg-ei-bg hover:text-ei-text'"
-                  [title]="sidebarCollapsed() ? 'AI Assistant' : ''">
-            <lucide-icon name="sparkles" [size]="18" class="flex-shrink-0"></lucide-icon>
-            @if (!sidebarCollapsed()) {
-              <span>AI Assistant</span>
-              <span class="ml-auto w-2 h-2 rounded-full bg-ei-emerald animate-pulse"></span>
-            }
-          </button>
-
           @for (item of toolNav; track item.route) {
             <a [routerLink]="item.route"
                routerLinkActive="bg-ei-accent/10 text-ei-accent border-l-[3px] border-ei-accent"
@@ -196,12 +179,6 @@ import { toSignal } from '@angular/core/rxjs-interop';
               <lucide-icon name="plus" [size]="14"></lucide-icon>
               <span class="hidden sm:inline">New Expense</span>
             </a>
-            <!-- Mobile AI toggle -->
-            <button (click)="chatOpen.set(!chatOpen())"
-                    class="md:hidden w-9 h-9 rounded-lg flex items-center justify-center transition-colors"
-                    [class]="chatOpen() ? 'bg-ei-accent text-white' : 'bg-ei-bg text-ei-subtle hover:text-ei-text'">
-              <lucide-icon name="sparkles" [size]="16"></lucide-icon>
-            </button>
           </div>
         </header>
 
@@ -215,15 +192,30 @@ import { toSignal } from '@angular/core/rxjs-interop';
 
       <!-- AI Chat Panel (right) -->
       @if (chatOpen()) {
-        <!-- Mobile backdrop -->
-        <div class="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm md:hidden" (click)="chatOpen.set(false)"></div>
+        <!-- Backdrop -->
+        <div class="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm lg:hidden" (click)="chatOpen.set(false)"></div>
         <!-- Panel -->
-        <div class="fixed inset-y-0 right-0 z-50 w-full sm:w-[380px] md:static md:z-auto md:w-[380px]
+        <div class="fixed inset-y-0 right-0 z-50 w-full sm:w-[400px] lg:static lg:z-auto lg:w-[380px]
                     flex-shrink-0 border-l border-ei-dark-b animate-slide-right">
           <app-ai-chat (closePanel)="chatOpen.set(false)"></app-ai-chat>
         </div>
       }
     </div>
+
+    <!-- AI Assistant FAB (bottom-right) -->
+    <button (click)="chatOpen.set(!chatOpen())"
+            class="fixed bottom-5 right-5 z-[60] w-12 h-12 rounded-full shadow-lg
+                   flex items-center justify-center transition-all duration-200
+                   hover:scale-105 active:scale-95"
+            [class]="chatOpen()
+              ? 'bg-ei-dark-s text-slate-300 hover:bg-ei-dark-b'
+              : 'bg-ei-accent text-white hover:bg-ei-accent-d'"
+            title="AI Assistant">
+      <lucide-icon [name]="chatOpen() ? 'x' : 'sparkles'" [size]="20"></lucide-icon>
+      @if (!chatOpen()) {
+        <span class="absolute -top-0.5 -right-0.5 w-3 h-3 rounded-full bg-ei-emerald border-2 border-ei-bg animate-pulse"></span>
+      }
+    </button>
   `,
   styles: []
 })
