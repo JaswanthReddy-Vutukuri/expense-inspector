@@ -145,7 +145,7 @@ export class ModifyExpenseTool extends StructuredTool {
       );
       
       const updated = response.data;
-      return `✅ Successfully updated expense #${updated.id}: ₹${updated.amount} for ${updated.category_name} on ${updated.date}`;
+      return `✅ Successfully updated expense #${updated.id}: $${updated.amount} for ${updated.category_name} on ${updated.date}`;
       
     } catch (error) {
       console.error('[ModifyExpenseTool] Error:', {

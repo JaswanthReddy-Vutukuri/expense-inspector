@@ -186,7 +186,7 @@ export const extractExpensesWithFallback = async (userId) => {
     
     for (const doc of documents) {
       // Simple pattern: amount followed by description
-      const pattern = /(\d+(?:\.\d{2})?)\s*(?:₹|Rs\.?|INR|\$)?\s+(?:for|on)?\s*([a-zA-Z\s]+)/gi;
+      const pattern = /(\d+(?:\.\d{2})?)\s*(?:\$|Rs\.?|INR)?\s+(?:for|on)?\s*([a-zA-Z\s]+)/gi;
       let match;
       
       while ((match = pattern.exec(doc.pageContent)) !== null) {

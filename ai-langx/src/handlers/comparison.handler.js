@@ -64,8 +64,8 @@ const explainComparison = async (comparisonResult) => {
 You are a financial assistant explaining expense comparison results.
 
 Comparison Summary:
-- Total PDF Expenses: {pdfCount} items, Amount: ₹{pdfAmount}
-- Total App Expenses: {appCount} items, Amount: ₹{appAmount}
+- Total PDF Expenses: {pdfCount} items, Amount: ${pdfAmount}
+- Total App Expenses: {appCount} items, Amount: ${appAmount}
 - Matched: {matchedCount} expenses
 - Only in PDF: {pdfOnlyCount} expenses
 - Only in App: {appOnlyCount} expenses
@@ -93,11 +93,11 @@ Keep it under 150 words.
       : 'None';
     
     const pdfOnlyList = pdfOnly.length > 0
-      ? pdfOnly.slice(0, 5).map(e => `- ₹${e.amount} for ${e.description} on ${e.date || 'unknown'}`).join('\n')
+      ? pdfOnly.slice(0, 5).map(e => `- $${e.amount} for ${e.description} on ${e.date || 'unknown'}`).join('\n')
       : 'None';
     
     const appOnlyList = appOnly.length > 0
-      ? appOnly.slice(0, 5).map(e => `- ₹${e.amount} for ${e.description || e.category_name} on ${e.date || e.expense_date}`).join('\n')
+      ? appOnly.slice(0, 5).map(e => `- $${e.amount} for ${e.description || e.category_name} on ${e.date || e.expense_date}`).join('\n')
       : 'None';
     
     // Format prompt
@@ -137,8 +137,8 @@ const generateFallbackSummary = (comparisonResult) => {
   const { summary, matched, pdfOnly, appOnly } = comparisonResult;
   
   let text = `📊 Comparison Summary:\n\n`;
-  text += `PDF: ${summary.pdfTotal.count} expenses, ₹${summary.pdfTotal.amount}\n`;
-  text += `App: ${summary.appTotal.count} expenses, ₹${summary.appTotal.amount}\n`;
+  text += `PDF: ${summary.pdfTotal.count} expenses, $${summary.pdfTotal.amount}\n`;
+  text += `App: ${summary.appTotal.count} expenses, $${summary.appTotal.amount}\n`;
   text += `Matched: ${matched.length} expenses\n\n`;
   
   if (pdfOnly.length > 0) {

@@ -72,7 +72,7 @@ Your goal is to help users manage their finances by interacting with the provide
    - clear_expenses: Delete multiple expenses at once
 
 3. DATA EXTRACTION:
-   - Amount: Extract numeric value, ignoring currency symbols (₹999 → 999, $50.50 → 50.50)
+   - Amount: Extract numeric value, ignoring currency symbols ($999 → 999, $50.50 → 50.50)
    - Category: Pass user's category description as-is ("food", "uber", "coffee") - will be normalized automatically
    - Description: Extract context from user message
    - Date: Pass relative dates ("today", "yesterday") or absolute dates ("2026-02-01") - will be parsed automatically
@@ -104,7 +104,7 @@ Your goal is to help users manage their finances by interacting with the provide
    - If user provides both amount and category, call create_expense immediately
 
 7. CONFIRMATION:
-   - After tool execution succeeds, confirm the action: "Added ₹500 for Food on {date}"
+   - After tool execution succeeds, confirm the action: "Added $500 for Food on {date}"
    - If tool returns error, explain it simply to the user
 
 8. TONE: Be professional, concise, and helpful.
@@ -206,7 +206,7 @@ Answer the user's question based ONLY on the provided document excerpts.
    - Example: "According to [Source 1], you spent..."
 
 3. FORMATTING:
-   - Format numbers as currency when relevant (₹)
+   - Format numbers as currency when relevant ($)
    - Use clear, concise language
    - Organize multi-part answers with bullet points
 

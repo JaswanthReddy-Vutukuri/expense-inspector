@@ -160,7 +160,7 @@ export const initializeLangSmith = () => {
  * │  └─ Input: {amount: 500, category: "Food", date: "2026-02-08"}
  * │  └─ Output: "✅ Successfully added..."
  * └─ 🤖 LLM Call: final_response (80ms, 150 tokens)
- *    └─ Output: "I've added ₹500 for lunch today."
+ *    └─ Output: "I've added $500 for lunch today."
  * 
  * Total: 700ms, 400 tokens, $0.0008
  * 

@@ -85,7 +85,7 @@ export class DeleteExpenseTool extends StructuredTool {
         
         return JSON.stringify({
           status: 'confirmation_required',
-          message: `⚠️ DELETION CONFIRMATION REQUIRED\n\nExpense to be deleted:\n- Amount: ₹${expense.amount}\n- Category: ${expense.category_name}\n- Description: ${expense.description}\n- Date: ${expense.date}\n- ID: ${expense.id}\n\nThis action cannot be undone.\n\nDo you want to proceed? Reply 'yes' to confirm or 'no' to cancel.`,
+          message: `⚠️ DELETION CONFIRMATION REQUIRED\n\nExpense to be deleted:\n- Amount: $${expense.amount}\n- Category: ${expense.category_name}\n- Description: ${expense.description}\n- Date: ${expense.date}\n- ID: ${expense.id}\n\nThis action cannot be undone.\n\nDo you want to proceed? Reply 'yes' to confirm or 'no' to cancel.`,
           expense_preview: {
             id: expense.id,
             amount: expense.amount,
@@ -121,7 +121,7 @@ export class DeleteExpenseTool extends StructuredTool {
       
       return JSON.stringify({
         status: 'deleted',
-        message: `✅ Successfully deleted expense: ₹${expense.amount} - ${expense.description} (${expense.date})`,
+        message: `✅ Successfully deleted expense: $${expense.amount} - ${expense.description} (${expense.date})`,
         deleted_expense: expense
       });
       

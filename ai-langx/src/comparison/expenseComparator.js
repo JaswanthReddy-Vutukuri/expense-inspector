@@ -219,7 +219,7 @@ export const compareExpenses = (pdfExpenses, appExpenses, options = {}) => {
       pdfOnly.push(pdfExp.original);
       differences.push({
         type: 'missing_in_app',
-        description: `₹${pdfExp.amount} for ${pdfExp.description} on ${pdfExp.date} found in PDF but not in app`
+        description: `$${pdfExp.amount} for ${pdfExp.description} on ${pdfExp.date} found in PDF but not in app`
       });
     }
   }
@@ -230,7 +230,7 @@ export const compareExpenses = (pdfExpenses, appExpenses, options = {}) => {
       appOnly.push(normalizedApp[i].original);
       differences.push({
         type: 'missing_in_pdf',
-        description: `₹${normalizedApp[i].amount} for ${normalizedApp[i].description} on ${normalizedApp[i].date} found in app but not in PDF`
+        description: `$${normalizedApp[i].amount} for ${normalizedApp[i].description} on ${normalizedApp[i].date} found in app but not in PDF`
       });
     }
   }
@@ -283,14 +283,14 @@ export const generateSummaryReport = (comparisonResult) => {
   const { summary, matched, pdfOnly, appOnly } = comparisonResult;
   
   let report = `📊 Expense Comparison Summary\n\n`;
-  report += `PDF Expenses: ${summary.pdfTotal.count} items, ₹${summary.pdfTotal.amount}\n`;
-  report += `App Expenses: ${summary.appTotal.count} items, ₹${summary.appTotal.amount}\n`;
-  report += `Matched: ${summary.matchedTotal.count} items, ₹${summary.matchedTotal.amount}\n\n`;
+  report += `PDF Expenses: ${summary.pdfTotal.count} items, $${summary.pdfTotal.amount}\n`;
+  report += `App Expenses: ${summary.appTotal.count} items, $${summary.appTotal.amount}\n`;
+  report += `Matched: ${summary.matchedTotal.count} items, $${summary.matchedTotal.amount}\n\n`;
   
   if (pdfOnly.length > 0) {
     report += `⚠️  Only in PDF (${pdfOnly.length}):\n`;
     pdfOnly.forEach(e => {
-      report += `  - ₹${e.amount} ${e.description} (${e.date})\n`;
+      report += `  - $${e.amount} ${e.description} (${e.date})\n`;
     });
     report += '\n';
   }
@@ -298,7 +298,7 @@ export const generateSummaryReport = (comparisonResult) => {
   if (appOnly.length > 0) {
     report += `⚠️  Only in App (${appOnly.length}):\n`;
     appOnly.forEach(e => {
-      report += `  - ₹${e.amount} ${e.description || e.category_name} (${e.date || e.expense_date})\n`;
+      report += `  - $${e.amount} ${e.description || e.category_name} (${e.date || e.expense_date})\n`;
     });
   }
   

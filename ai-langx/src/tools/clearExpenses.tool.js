@@ -116,7 +116,7 @@ export class ClearExpensesTool extends StructuredTool {
       if (!args.confirmed) {
         const totalAmount = expenses.reduce((sum, e) => sum + parseFloat(e.amount || 0), 0);
         const preview = expenses.slice(0, 10).map(e => 
-          `- ₹${e.amount} - ${e.description || e.category_name} (${e.date})`
+          `- $${e.amount} - ${e.description || e.category_name} (${e.date})`
         ).join('\n');
         const moreText = expenses.length > 10 ? `\n... and ${expenses.length - 10} more` : '';
         
@@ -124,7 +124,7 @@ export class ClearExpensesTool extends StructuredTool {
         
         return JSON.stringify({
           status: 'confirmation_required',
-          message: `⚠️ DELETION CONFIRMATION REQUIRED\n\n${expenses.length} expense(s) will be deleted:\n${preview}${moreText}\n\nTotal Amount: ₹${totalAmount.toFixed(2)}\n\nThis action cannot be undone.\n\nDo you want to proceed? Reply 'yes' to confirm or 'no' to cancel.`,
+          message: `⚠️ DELETION CONFIRMATION REQUIRED\n\n${expenses.length} expense(s) will be deleted:\n${preview}${moreText}\n\nTotal Amount: $${totalAmount.toFixed(2)}\n\nThis action cannot be undone.\n\nDo you want to proceed? Reply 'yes' to confirm or 'no' to cancel.`,
           expense_count: expenses.length,
           total_amount: totalAmount,
           preview: expenses.slice(0, 10).map(e => ({

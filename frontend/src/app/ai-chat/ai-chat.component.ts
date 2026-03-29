@@ -30,20 +30,20 @@ import { toSignal } from '@angular/core/rxjs-interop';
           </div>
         </div>
         <div class="flex items-center gap-2">
-          <!-- Layer toggle -->
+          <!-- Layer toggle (remove disabled to enable switching) -->
           <div class="flex rounded-md border border-ei-dark-b overflow-hidden">
-            <button (click)="aiConfig.setLayer('vanilla')"
+            <button disabled (click)="aiConfig.setLayer('vanilla')"
                     class="px-2 py-1 text-[10px] font-mono transition-colors"
                     [class]="aiConfig.activeLayer() === 'vanilla'
                       ? 'bg-ei-accent text-white'
-                      : 'text-slate-400 hover:text-slate-200'">
+                      : 'text-slate-500'">
               Vanilla
             </button>
-            <button (click)="aiConfig.setLayer('langchain')"
+            <button disabled (click)="aiConfig.setLayer('langchain')"
                     class="px-2 py-1 text-[10px] font-mono transition-colors"
                     [class]="aiConfig.activeLayer() === 'langchain'
                       ? 'bg-ei-accent text-white'
-                      : 'text-slate-400 hover:text-slate-200'">
+                      : 'text-slate-500'">
               LangChain
             </button>
           </div>
@@ -237,12 +237,12 @@ export class AiChatComponent {
       return ['Summarize this month', 'Compare to last month', 'Biggest category?'];
     }
     if (url.includes('/expenses')) {
-      return ['Expenses over ₹500', 'Show food expenses', 'Last week spending'];
+      return ['Expenses over $500', 'Show food expenses', 'Last week spending'];
     }
     if (url.includes('/receipts')) {
       return ['Match receipts', 'Unreconciled items'];
     }
-    return ['Add ₹200 for lunch', 'Show this week', 'What did I spend?'];
+    return ['Add $200 for lunch', 'Show this week', 'What did I spend?'];
   });
 
   ngOnInit() {

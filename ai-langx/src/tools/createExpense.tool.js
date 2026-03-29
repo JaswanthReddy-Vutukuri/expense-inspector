@@ -188,7 +188,7 @@ export class CreateExpenseTool extends StructuredTool {
       
       // STEP 5: Return success message
       const expense = response.data;
-      const successMessage = `✅ Successfully added expense: ₹${expense.amount} for ${expense.category_name} on ${expense.date}`;
+      const successMessage = `✅ Successfully added expense: $${expense.amount} for ${expense.category_name} on ${expense.date}`;
       
       console.log('[CreateExpenseTool] Success:', successMessage);
       return successMessage;

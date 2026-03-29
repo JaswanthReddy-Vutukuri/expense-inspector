@@ -42,7 +42,7 @@ const router = express.Router();
  * RESPONSE:
  * ```json
  * {
- *   "reply": "✅ Successfully added ₹500 for Food on 2026-02-08"
+ *   "reply": "✅ Successfully added $500 for Food on 2026-02-08"
  * }
  * ```
  */
@@ -198,11 +198,11 @@ router.get('/chat/info', (req, res) => {
     examples: [
       {
         request: { message: 'Add 500 for lunch today' },
-        response: { reply: '✅ Successfully added ₹500 for Food on 2026-02-08' }
+        response: { reply: '✅ Successfully added $500 for Food on 2026-02-08' }
       },
       {
         request: { message: 'Show my expenses' },
-        response: { reply: 'You have 3 expenses totaling ₹1,500...' }
+        response: { reply: 'You have 3 expenses totaling $1,500...' }
       }
     ],
     comparison: {

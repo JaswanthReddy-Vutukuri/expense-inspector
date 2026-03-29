@@ -161,7 +161,7 @@ export class ListExpensesTool extends StructuredTool {
  * LEARNING NOTE - TOOL OUTPUT FORMATS:
  * 
  * Tools can return:
- * 1. Plain text: "Found 5 expenses totaling ₹500"
+ * 1. Plain text: "Found 5 expenses totaling $500"
  * 2. Structured JSON: {count: 5, total: 500, expenses: [...]}
  * 3. Formatted tables/lists
  * 
