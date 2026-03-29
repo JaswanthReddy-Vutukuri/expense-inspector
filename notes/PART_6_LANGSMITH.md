@@ -108,7 +108,7 @@ Projects:
 # .env file
 LANGCHAIN_TRACING_V2=true
 LANGCHAIN_API_KEY=lsv2_pt_...
-LANGCHAIN_PROJECT=ai-expense-tracker-dev  # Optional (defaults to "default")
+LANGCHAIN_PROJECT=expense-inspector-dev  # Optional (defaults to "default")
 LANGCHAIN_ENDPOINT=https://api.smith.langchain.com  # Optional (default)
 ```
 
@@ -119,7 +119,7 @@ import 'dotenv/config';
 // Or set programmatically
 process.env.LANGCHAIN_TRACING_V2 = "true";
 process.env.LANGCHAIN_API_KEY = "lsv2_pt_...";
-process.env.LANGCHAIN_PROJECT = "ai-expense-tracker-dev";
+process.env.LANGCHAIN_PROJECT = "expense-inspector-dev";
 ```
 
 #### **3. That's It! (Automatic Tracing)**
@@ -140,7 +140,7 @@ const result = await llm.invoke("Hello");
 
 ```
 ┌────────────────────────────────────────────────────┐
-│ Project: ai-expense-tracker-prod                   │
+│ Project: expense-inspector-prod                   │
 ├────────────────────────────────────────────────────┤
 │ Total Runs: 12,453                                 │
 │ Success Rate: 94.2%                                │
@@ -260,7 +260,7 @@ const result = await intentRouterGraph.invoke(
 
 ### 33.7 Viewing Traces in Dashboard
 
-1. **Go to Project**: smith.langchain.com → ai-expense-tracker-prod
+1. **Go to Project**: smith.langchain.com → expense-inspector-prod
 2. **Click on Trace**: See full execution tree
 3. **Inspect Runs**: Click any LLM/Tool run to see:
    - Full input prompt
@@ -2343,7 +2343,7 @@ const client = new Client({ apiKey: process.env.LANGCHAIN_API_KEY });
 // Check daily costs
 const today = new Date();
 const runs = await client.listRuns({
-  projectName: "ai-expense-tracker-prod",
+  projectName: "expense-inspector-prod",
   startTime: new Date(today.setHours(0, 0, 0, 0)),
   endTime: new Date()
 });
@@ -2395,7 +2395,7 @@ Latency by Step:
 // File: scripts/monitorLatency.js
 
 const runs = await client.listRuns({
-  projectName: "ai-expense-tracker-prod",
+  projectName: "expense-inspector-prod",
   startTime: new Date(Date.now() - 60 * 60 * 1000)  // Last 1 hour
 });
 
@@ -2445,13 +2445,13 @@ Errors by Feature:
 // File: scripts/monitorErrors.js
 
 const runs = await client.listRuns({
-  projectName: "ai-expense-tracker-prod",
+  projectName: "expense-inspector-prod",
   startTime: new Date(Date.now() - 15 * 60 * 1000),  // Last 15 min
   error: true  // Only failed runs
 });
 
 const totalRuns = await client.listRuns({
-  projectName: "ai-expense-tracker-prod",
+  projectName: "expense-inspector-prod",
   startTime: new Date(Date.now() - 15 * 60 * 1000)
 });
 
@@ -2475,7 +2475,7 @@ if (errorRate > ERROR_RATE_THRESHOLD) {
 
 // Get feedback from last 24h
 const runs = await client.listRuns({
-  projectName: "ai-expense-tracker-prod",
+  projectName: "expense-inspector-prod",
   startTime: new Date(Date.now() - 24 * 60 * 60 * 1000),
   hasFeedback: true
 });
@@ -2516,7 +2516,7 @@ setInterval(async () => {
   const lastHour = new Date(Date.now() - 60 * 60 * 1000);
   
   const runs = await client.listRuns({
-    projectName: "ai-expense-tracker-prod",
+    projectName: "expense-inspector-prod",
     startTime: lastHour
   });
   

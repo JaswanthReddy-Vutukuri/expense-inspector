@@ -137,7 +137,7 @@ git --version
 # Clone the repository
 cd Desktop
 git clone <repository-url>
-cd ai-expense-tracker
+cd expense-inspector
 
 # Navigate to ai-langx folder
 cd ai-langx

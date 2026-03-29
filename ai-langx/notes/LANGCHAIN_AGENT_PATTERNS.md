@@ -338,7 +338,7 @@ const llm = createLLM({
 ```
 https://smith.langchain.com/
 ├── Projects
-│   └── ai-expense-tracker
+│   └── expense-inspector
 │       └── Traces
 │           ├── agent_run_1
 │           │   ├── LLM: classifyIntent (input: "Add ₹200...")

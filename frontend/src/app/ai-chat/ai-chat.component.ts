@@ -30,7 +30,7 @@ import { AiChatService, ChatMessage } from '../services/ai-chat.service';
 export class AiChatComponent {
   // Configuration
   private readonly MAX_HISTORY_MESSAGES = 20; // Keep last 10 exchanges (20 messages)
-  private readonly STORAGE_KEY = 'ai-expense-tracker-chat-history';
+  private readonly STORAGE_KEY = 'expense-inspector-chat-history';
   
   // UI state
   isOpen = signal(false);
